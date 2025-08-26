@@ -1,15 +1,49 @@
 {% set sub_title = "登録完了" %}
 {% include 'common/header.html' %}
-<div class="container">
-    <div class="form-box">
-        <h2>アカウント登録完了</h2>
-        <p>ご登録ありがとうございます。<br>ログイン画面からサインインしてください。</p>
-        <form method="get" action="/login" class="login-form">
-            <button class="btn login-btn" type="submit">ログイン画面へ</button>
-        </form>
-        <div style="margin-top:16px;">
-            <a href="/">← トップへ戻る</a>
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <div class="text-success mb-3">
+                            <i class="fas fa-check-circle fa-4x"></i>
+                        </div>
+                        <h2 class="card-title text-success">{{ _("アカウント登録完了") }}</h2>
+                        <p class="card-text">
+                            {% if username %}{{ username }}さん、{% endif %}{{ _("ご登録ありがとうございます！") }}<br>
+                            {{ _("アカウントが正常に作成されました") }}<br>
+                            {{ _("下記ボタンから、すぐにチャットを始めることができます") }}
+                        </p>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <form method="post" action="{{ url_for('auth.regist_complete') }}">
+                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                                <i class="fas fa-comments me-2"></i>{{ _("チャット一覧へ") }}
+                            </button>
+                        </form>
+
+                        <form method="get" action="{{ url_for('auth.login') }}">
+                            <button class="btn btn-outline-secondary w-100" type="submit">
+                                <i class="fas fa-sign-in-alt me-2"></i>{{ _("手動でログイン") }}
+                            </button>
+                        </form>
+
+                        <!-- 区切り線 -->
+                        <div class="position-relative my-2">
+                            <hr class="border-secondary">
+                        </div>
+
+                        <a href="{{ url_for('auth.index') }}" class="btn btn-link">
+                            <i class="fas fa-arrow-left me-1"></i>{{ _("トップへ戻る") }}
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</main>
+
 {% include 'common/footer.html' %}

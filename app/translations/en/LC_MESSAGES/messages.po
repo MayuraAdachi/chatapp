@@ -1,0 +1,163 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-08-17 18:51+0900\n"
+"PO-Revision-Date: 2025-08-17 18:28+0900\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/templates/index.html:1
+msgid "トップ"
+msgstr "Home"
+
+#: app/templates/index.html:7
+msgid "へようこそ"
+msgstr ""
+
+#: app/templates/index.html:8
+msgid "アカウントでログインするか、新規登録してご利用ください。"
+msgstr "Please login with your account or register as a new user."
+
+#: app/templates/index.html:8
+msgid "アカウント登録なしでも匿名でご参加いただけます。"
+msgstr "You can also join anonymously without account registration."
+
+#: app/templates/auth/login.html:7 app/templates/auth/login.html:45
+#: app/templates/index.html:13 app/templates/room/index.html:24
+#: app/templates/room/index.html:46
+msgid "ログイン"
+msgstr "Login"
+
+#: app/templates/index.html:15
+msgid "既にアカウントをお持ちの方"
+msgstr "For those who already have an account"
+
+#: app/templates/index.html:20
+msgid "アカウント作成"
+msgstr "Create Account"
+
+#: app/templates/index.html:22
+msgid "新規でアカウントを作成する方"
+msgstr "For those who want to create a new account"
+
+#: app/templates/auth/login.html:50 app/templates/index.html:26
+#: app/templates/room/index.html:39
+msgid "または"
+msgstr "Or"
+
+#: app/templates/index.html:31
+msgid "ニックネーム（匿名参加）"
+msgstr "Nickname (Anonymous)"
+
+#: app/templates/index.html:34 app/templates/room/index.html:35
+msgid "匿名で参加"
+msgstr "Join Anonymously"
+
+#: app/templates/index.html:36
+msgid "アカウント登録なしで参加"
+msgstr "Join without account registration"
+
+#: app/templates/auth/login.html:8
+msgid "ユーザー名またはメールアドレスとパスワードを入力してログインしてください。"
+msgstr "Please enter your username or email address and password to login."
+
+#: app/templates/auth/login.html:32
+msgid "ユーザー名またはメールアドレス"
+msgstr "Username or Email Address"
+
+#: app/templates/auth/login.html:38 app/templates/auth/regist_confirm.html:20
+msgid "パスワード"
+msgstr "Password"
+
+#: app/templates/auth/login.html:55 app/templates/room/index.html:21
+#: app/templates/room/index.html:43
+msgid "アカウントを作成"
+msgstr "Create Account"
+
+#: app/templates/auth/login.html:60 app/templates/auth/regist_confirm.html:45
+msgid "トップへ戻る"
+msgstr "Return to Top"
+
+#: app/templates/auth/regist_confirm.html:1
+msgid "登録内容確認"
+msgstr "Registration Confirmation"
+
+#: app/templates/auth/regist_confirm.html:7
+msgid "登録内容の確認"
+msgstr "Confirm Registration Details"
+
+#: app/templates/auth/regist_confirm.html:8
+msgid "入力内容をご確認ください。間違いがなければ「この内容で登録」をクリックしてください。"
+msgstr ""
+"Please review your information. If everything is correct, click 'Register"
+" with this information'."
+
+#: app/templates/auth/regist_confirm.html:12
+msgid "ユーザー名"
+msgstr "Username"
+
+#: app/templates/auth/regist_confirm.html:16
+msgid "メールアドレス"
+msgstr "Email Address"
+
+#: app/templates/auth/regist_confirm.html:31
+msgid "この内容で登録"
+msgstr "Register with this information"
+
+#: app/templates/auth/regist_confirm.html:39
+msgid "修正する"
+msgstr "Make Changes"
+
+#: app/templates/common/header.html:52
+msgid "その他"
+msgstr "Others"
+
+#: app/templates/room/index.html:1
+msgid "ルーム一覧"
+msgstr "Room List"
+
+#: app/templates/room/index.html:11 app/templates/room/index.html:18
+msgid "ようこそ"
+msgstr "Welcome"
+
+#: app/templates/room/index.html:11 app/templates/room/index.html:18
+msgid "さん"
+msgstr ""
+
+#: app/templates/room/index.html:11
+msgid "登録ユーザー"
+msgstr "Registered User"
+
+#: app/templates/room/index.html:14
+msgid "ログアウト"
+msgstr "Logout"
+
+#: app/templates/room/index.html:18
+msgid "匿名ユーザー"
+msgstr "Anonymous User"
+
+#: app/templates/room/index.html:29
+msgid "チャットに参加するには名前を入力してください。"
+msgstr "Please enter your name to join the chat."
+
+#: app/templates/room/index.html:32
+msgid "あなたの名前"
+msgstr "Your Name"
+
+#~ msgid "チャットアプリへようこそ"
+#~ msgstr "Welcome to Chat App"
+
+#~ msgid "チャットアプリ"
+#~ msgstr "Chat App"

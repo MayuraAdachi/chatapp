@@ -1,0 +1,120 @@
+{% set sub_title = _("システム情報") %}
+{% include 'common/header.html' %}
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-info-circle text-primary me-2"></i>{{ _("システム情報") }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h5 class="text-primary">{{ _("アプリケーション情報") }}</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="fw-bold">{{ _("アプリケーション名") }}</td>
+                                    <td>{{ config['APP_TITLE'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ _("バージョン") }}</td>
+                                    <td><span class="badge bg-info">{{ system_info.app_version }}</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ _("デバッグモード") }}</td>
+                                    <td>
+                                        {% if config['DEBUG_MODE'] %}
+                                            <span class="badge bg-warning">{{ _("有効") }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success">{{ _("無効") }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ _("データベース") }}</td>
+                                    <td><span class="badge bg-secondary">{{ system_info.database_engine }}</span></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <h5 class="text-primary">{{ _("システム情報") }}</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="fw-bold">{{ _("OS") }}</td>
+                                    <td><code>{{ system_info.platform }}</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ _("Python バージョン") }}</td>
+                                    <td><code>{{ system_info.python_version.split()[0] }}</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ _("Python 実装") }}</td>
+                                    <td><code>{{ system_info.python_version.split('(')[0].strip() }}</code></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- サーバー状況 -->
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <h5 class="text-primary">{{ _("サーバー状況") }}</h5>
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>{{ _("システムは正常に動作しています") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 設定情報 -->
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <h5 class="text-primary">{{ _("設定情報") }}</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="fw-bold">{{ _("最大ファイルサイズ") }}</td>
+                                    <td>{{ "%.1f"|format(config['MAX_CONTENT_LENGTH'] / 1024 / 1024) }}MB</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ _("CSRF保護") }}</td>
+                                    <td>
+                                        {% if config['WTF_CSRF_ENABLED'] %}
+                                            <span class="badge bg-success">{{ _("有効") }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ _("無効") }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ _("対応言語数") }}</td>
+                                    <td>{{ config['LANGUAGES']|length if config.get('LANGUAGES') else '1' }}言語</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 戻るボタン -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>{{ _("ダッシュボードに戻る") }}
+                                </a>
+                                {% if is_admin_or_developer %}
+                                <a href="{{ url_for('admin.developer_tools') }}" class="btn btn-info">
+                                    <i class="fas fa-tools me-2"></i>{{ _("開発者ツール") }}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include 'common/footer.html' %}

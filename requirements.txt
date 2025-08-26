@@ -1,7 +1,13 @@
 Flask
+Flask-Login
 Flask-SocketIO
 Flask-SQLAlchemy
 psycopg2-binary
 python-dotenv
 flask-wtf
 email_validator
+Flask-Babel
+deep-translator
+requests
+Pillow
+Werkzeug

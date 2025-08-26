@@ -1,39 +1,88 @@
-{% set sub_title = "アカウント登録" %}
+{% set sub_title = _("アカウント登録") %}
 {% include 'common/header.html' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='auth/style.css') }}">
 
-    <div class="container">
-        <div class="form-box">
-            <h2>アカウント作成</h2>
-            <form method="post" action="url_for('auth.regist_confirm')" class="regist-form">
-                {{ form.hidden_tag() }}
-                <div class="input-group">
-                    {{ form.username(class="input-full login-input", id="username", placeholder="ユーザー名", required=false) }}
-                    {% if errors and errors.username %}
-                        <div class="error-message">{{ errors.username }}</div>
-                    {% endif %}
-                </div>
-                <div class="input-group">
-                    {{ form.password(class="input-full login-input", style="position: relative", id="password", placeholder="パスワード（6文字以上）", type="password", required=false) }}
-                    <!-- 目のアイコン -->
-                    <span id="pass_view"><i class="far fa-eye-slash"></i></span>
-                </div>
-                <div class="input-group">
-                    {{ form.email(class="input-full login-input", placeholder="メールアドレス", type="email", id="email", required=false) }}
-                    {% if errors and errors.email %}
-                        <div class="error-message">{{ errors.email }}</div>
-                    {% endif %}
-                </div>
-                <button class="btn regist-btn" type="submit">アカウントを登録</button>
-            </form>
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <h2 class="card-title">
+                            <i class="fas fa-user-plus text-success me-2"></i>
+                            {{ _("アカウント作成") }}
+                        </h2>
+                        <p class="card-text text-muted">
+                            {{ _("必要な情報を入力してアカウントを作成してください。すべての項目は必須です。") }}
+                        </p>
+                    </div>
 
-            <div class="or">または</div>
-            <form method="get" action="{{ url_for('auth.index') }}" class="login-form">
-                <button class="btn login-btn" type="submit">アカウントでログイン</button>
-            </form>
-            <div style="margin-top:16px;">
-                <a href="/">← トップへ戻る</a>
+                    <!-- 登録フォーム -->
+                    <form method="post" action="{{ url_for('auth.regist') }}" class="text-start">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                {{ form.username(class="form-control form-control-lg", placeholder=_("ユーザー名"), required=false) }}
+                            </div>
+                            {% if errors and errors.username %}
+                                <div class="text-danger small mt-1">{{ errors.username|e }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                {{ form.email(class="form-control form-control-lg", placeholder=_("メールアドレス"), type="email", required=false) }}
+                            </div>
+                            {% if errors and errors.email %}
+                                <div class="text-danger small mt-1">{{ errors.email|e }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                {{ form.password(class="form-control form-control-lg", placeholder=_("パスワード（8文字以上）"), type="password", required=false) }}
+                                <button class="btn btn-outline-secondary" type="button" id="pass_view">
+                                    <i class="far fa-eye-slash"></i>
+                                </button>
+                            </div>
+                            {% if errors and errors.password %}
+                                <div class="text-danger small mt-1">{{ errors.password|e }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button class="btn btn-success btn-lg w-100 mb-3" type="submit">
+                            <i class="fas fa-user-plus me-2"></i>{{ _("アカウントを登録") }}
+                        </button>
+                    </form>
+
+                    <!-- 区切り線 -->
+                    <div class="position-relative my-4">
+                        <hr class="border-secondary">
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">
+                            {{ _("または") }}
+                        </span>
+                    </div>
+
+                    <!-- ログインボタン -->
+                    <form method="get" action="{{ url_for('auth.login') }}">
+                        <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">
+                            <i class="fas fa-sign-in-alt me-2"></i>{{ _("ログイン") }}
+                        </button>
+                    </form>
+
+                    <!-- トップへ戻るリンク -->
+                    <div class="mt-3">
+                        <a href="{{ url_for('index') }}" class="text-decoration-none">
+                            <i class="fas fa-arrow-left me-1"></i>{{ _("トップへ戻る") }}
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</main>
+
 {% include 'common/footer.html' %}

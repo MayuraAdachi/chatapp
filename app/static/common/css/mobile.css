@@ -1,64 +1,26 @@
 @charset 'utf-8';
 
-@media (max-width: 600px) {
-    body {
-        margin: 8px;
-        font-size: 1em;
+/* 最小限のモバイル対応CSS - Bootstrap 5で対応できない部分のみ */
+
+@media (max-width: 768px) {
+    /* ナビバーのタイトルサイズ調整（Bootstrap 5だけでは細かい調整が難しい部分） */
+    .navbar-brand h1 {
+        font-size: 1.25rem !important;
     }
 
-    .container {
-        max-width: 100vw;
-        padding: 0 4px;
+    .navbar-brand p {
+        font-size: 0.75rem !important;
     }
 
-    .form-box {
-        padding: 12px;
-        border-radius: 0;
-        box-shadow: none;
+    /* 折りたたみメニューの視覚的な区切り */
+    .navbar-collapse {
+        border-top: 1px solid #dee2e6;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
     }
 
-    h1,
-    h2 {
-        font-size: 1.2em;
-        margin: 0.5em 0;
-    }
-
-    #chat {
-        height: 40vw;
-        min-height: 180px;
-        max-height: 50vh;
-        font-size: 1em;
-    }
-
-    #msg,
-    #send {
-        width: 100%;
-        margin: 4px 0;
-        font-size: 1em;
-    }
-
-    .btn,
-    .login-btn,
-    .regist-btn,
-    .enter-btn {
-        font-size: 1em;
-        padding: 10px 0;
-        width: 100%;
-    }
-
-    .input-full,
-    .login-input {
-        font-size: 1em;
-        padding: 10px;
-    }
-
-    .room {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 8px 0;
-    }
-
-    .room-name {
-        margin-bottom: 4px;
+    /* カードのパディング調整（Bootstrap 5の標準より少し小さく） */
+    .card-body {
+        padding: 1.25rem !important;
     }
 }

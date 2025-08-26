@@ -1,0 +1,134 @@
+{% extends "common/base.html" %}
+{% block title %}システムログ - 開発者ツール{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/logs.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-terminal me-2"></i>システムログ
+                    <span class="badge bg-warning">開発者設定</span>
+                </h2>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt me-1"></i>更新
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="clearLogs()">
+                        <i class="fas fa-trash me-1"></i>クリア
+                    </button>
+                    <a href="{{ url_for('admin.developer_tools') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i>開発者ツールに戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>アプリケーションログ
+                        <small class="text-muted">(最新100件)</small>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="log-container" id="logContainer">
+                        {% if logs %}
+                            {% for log in logs %}
+                            <div class="log-line {% if 'ERROR' in log %}log-error{% elif 'WARNING' in log %}log-warning{% elif 'INFO' in log %}log-info{% endif %}">
+                                {{ log }}
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="log-line text-muted">
+                            ログファイルが見つからないか、ログがありません。
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        ログは自動で更新されます。手動更新は「更新」ボタンをクリックしてください。                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>最近のアクティビティ
+                        <small class="text-muted">(最新30件)</small>
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    {% if activities %}
+                        {% for activity in activities %}
+                        <div class="activity-card">
+                            <div class="activity-content">
+                                {{ activity.content }}
+                            </div>
+                            <div class="activity-meta mt-2">
+                                <small class="activity-time">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ activity.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                                </small>
+                                {% if activity.room_name %}
+                                <small class="text-muted ms-2">
+                                    <i class="fas fa-comments me-1"></i>
+                                    {{ activity.room_name }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                        <div>アクティビティがありません</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- システム情報 -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-server me-2"></i>リアルタイム統計
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="realtimeStats">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>CPU使用率</small>
+                            <span class="badge bg-success" id="cpuUsage">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>メモリ使用量</small>
+                            <span class="badge bg-info" id="memoryUsage">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>アクティブ接続</small>
+                            <span class="badge bg-primary" id="activeConnections">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small>稼働時間</small>
+                            <span class="badge bg-secondary" id="uptime">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='admin/js/logs.js') }}"></script>
+{% endblock %}

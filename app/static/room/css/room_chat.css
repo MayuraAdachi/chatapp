@@ -1,0 +1,450 @@
+/* チャット画面専用CSS - 完全版 */
+
+/* 基本レイアウト */
+.chat-container {
+    min-height: 80vh !important;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    overflow: hidden;
+}
+
+.chat-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1020;
+    position: sticky;
+    top: 0;
+}
+
+.chat-main {
+    flex-grow: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    padding-bottom: 0 !important;
+}
+
+/* メッセージエリア */
+.messages-container {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    position: relative;
+}
+
+.messages-wrapper {
+    scroll-behavior: smooth;
+    padding-bottom: 1rem;
+}
+
+.messages-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.messages-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.messages-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* メッセージバブル */
+.message-bubble {
+    max-width: 75%;
+    margin-bottom: 1rem;
+    animation: fadeInUp 0.3s ease;
+    clear: both;
+}
+
+.message-bubble.own {
+    float: right;
+    clear: both;
+}
+
+.message-bubble.other {
+    float: left;
+    clear: both;
+}
+
+.message-bubble.own .message-content {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-bottom-right-radius: 0.5rem;
+    margin-left: auto;
+}
+
+.message-bubble.other .message-content {
+    background: white;
+    color: #333;
+    border: 1px solid #e9ecef;
+    border-bottom-left-radius: 0.5rem;
+}
+
+.message-content {
+    padding: 0.75rem 1rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    word-wrap: break-word;
+    position: relative;
+}
+
+.message-info {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+    text-align: right;
+}
+
+.message-bubble.other .message-info {
+    text-align: left;
+}
+
+.message-text {
+    white-space: pre-wrap;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.message-author {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    opacity: 0.8;
+}
+
+/* システムメッセージ */
+.system-message {
+    text-align: center;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    background: rgba(108, 117, 125, 0.1);
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* 入力中アニメーション */
+.typing-indicator {
+    background: rgba(108, 117, 125, 0.1);
+    border-radius: 0.5rem;
+    margin: 0.5rem 1rem;
+    transition: opacity 0.3s ease;
+}
+
+.typing-dots {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    background: #6c757d;
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+}
+
+/* メッセージ入力エリア */
+.message-input-container {
+    border-top: 1px solid #e9ecef;
+    background: white;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+#messageInput {
+    border: 1px solid #e9ecef !important;
+    border-radius: 0.5rem !important;
+    box-shadow: none !important;
+    resize: none;
+    transition: all 0.2s ease;
+    background: #f8f9fa;
+}
+
+#messageInput:focus {
+    background-color: white !important;
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.15) !important;
+}
+
+#sendButton {
+    border-radius: 0.5rem !important;
+    min-width: 45px;
+    transition: all 0.2s ease;
+}
+
+#sendButton:disabled {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    color: #6c757d;
+}
+
+#sendButton:not(:disabled):hover {
+    transform: scale(1.05);
+}
+
+/* 絵文字ピッカー */
+.emoji-picker-container {
+    border-top: 1px solid #e9ecef;
+    background: white;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.5rem;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.emoji-btn {
+    border: 1px solid #e9ecef !important;
+    background: white !important;
+    padding: 0.5rem;
+    border-radius: 0.5rem !important;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+}
+
+.emoji-btn:hover {
+    background-color: #e9ecef !important;
+    transform: scale(1.1);
+    border-color: #007bff !important;
+}
+
+/* メンバーサイドバー */
+.member-list {
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.member-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f8f9fa;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.member-item:hover {
+    background-color: #f8f9fa;
+}
+
+.member-item:last-child {
+    border-bottom: none;
+}
+
+.member-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #007bff, #28a745);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin-right: 0.75rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.member-info {
+    flex-grow: 1;
+}
+
+.member-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.member-role {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.member-status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: auto;
+}
+
+.member-status.online {
+    background-color: #28a745;
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #28a745;
+}
+
+.member-status.offline {
+    background-color: #6c757d;
+}
+
+/* ウェルカムメッセージ */
+#welcomeMessage {
+    opacity: 0.8;
+    background: rgba(0,123,255,0.05);
+    border-radius: 1rem;
+    margin: 2rem;
+    padding: 2rem;
+}
+
+#connectingMessage {
+    animation: pulse 2s infinite;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .chat-header .room-desc {
+        display: none !important;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .emoji-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .message-content {
+        padding: 0.625rem 0.875rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .message-bubble {
+        max-width: 90%;
+    }
+
+    .message-content {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .emoji-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .chat-header h5 {
+        font-size: 1.1rem;
+    }
+
+    .chat-header .small {
+        font-size: 0.75rem;
+    }
+}
+
+/* アニメーション */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* Firefox対応スクロールバー */
+.messages-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* トースト通知 */
+.toast {
+    min-width: 300px;
+    backdrop-filter: blur(10px);
+}
+
+.toast.bg-success {
+    background-color: rgba(212, 237, 218, 0.95) !important;
+    border-left: 4px solid #28a745;
+}
+
+.toast.bg-danger {
+    background-color: rgba(248, 215, 218, 0.95) !important;
+    border-left: 4px solid #dc3545;
+}
+
+.toast.bg-info {
+    background-color: rgba(209, 236, 241, 0.95) !important;
+    border-left: 4px solid #17a2b8;
+}
+
+/* アクセシビリティ改善 */
+.btn:focus,
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;
+    outline: none !important;
+}
+
+.btn:focus-visible {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* 高コントラスト対応 */
+@media (prefers-contrast: high) {
+    .message-content {
+        border-width: 2px;
+    }
+
+    .member-status.online {
+        box-shadow: 0 0 0 3px white, 0 0 0 5px #28a745;
+    }
+}
+
+/* モーション削減対応 */
+@media (prefers-reduced-motion: reduce) {
+    .message-bubble,
+    #connectingMessage,
+    .typing-dots span {
+        animation: none;
+    }
+
+    .btn,
+    .emoji-btn {
+        transition: none;
+    }
+}
+
+/* メッセージクリアフロート */
+.messages-list::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+/* メッセージクリアフロート */
+.messages-list::after {
+    content: "";
+    display: table;
+    clear: both;
+}

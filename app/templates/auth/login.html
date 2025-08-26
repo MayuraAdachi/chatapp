@@ -1,0 +1,112 @@
+{% set sub_title = _("ログイン") %}
+{% include 'common/header.html' %}
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <h2 class="card-title">
+                            <i class="fas fa-sign-in-alt text-primary me-2"></i>
+                            {{ _("ログイン") }}
+                        </h2>
+                        <p class="card-text text-muted">
+                            {{ _("ユーザー名またはメールアドレスとパスワードを入力してログインしてください") }}
+                        </p>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                    {{ message|e }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- ログインフォーム -->
+                    <form method="post" action="{{ url_for('auth.login') }}" class="text-start">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                {{ form.username(class="form-control form-control-lg", placeholder=_("ユーザー名またはメールアドレス")) }}
+                            </div>
+                            {% if errors and errors.username %}
+                                <div class="text-danger small mt-1">{{ errors.username|e }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                {{ form.password(class="form-control form-control-lg", placeholder=_("パスワード")) }}
+                                <button class="btn btn-outline-secondary" type="button" id="pass_view">
+                                    <i class="far fa-eye-slash"></i>
+                                </button>
+                            </div>
+                            {% if errors and errors.password %}
+                                <div class="text-danger small mt-1">{{ errors.password|e }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">
+                            <i class="fas fa-sign-in-alt me-2"></i>{{ _("ログイン") }}
+                        </button>
+                    </form>
+
+                    <!-- 区切り線 -->
+                    <div class="position-relative my-4">
+                        <hr class="border-secondary">
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">
+                            {{ _("または") }}
+                        </span>
+                    </div>
+
+                    <!-- アカウント作成ボタン -->
+                    <form method="get" action="{{ url_for('auth.regist') }}">
+                        <button class="btn btn-success btn-lg w-100 mb-3" type="submit">
+                            <i class="fas fa-user-plus me-2"></i>{{ _("アカウントを作成") }}
+                        </button>
+                    </form>
+
+                    <!-- トップへ戻るリンク -->
+                    <div class="mt-3">
+                        <a href="{{ url_for('auth.index') }}" class="text-decoration-none">
+                            <i class="fas fa-arrow-left me-1"></i>{{ _("トップへ戻る") }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include 'common/footer.html' %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const passViewBtn = document.getElementById('pass_view');
+    const passwordInput = document.querySelector('input[name="password"]');
+
+    if (passViewBtn && passwordInput) {
+        passViewBtn.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                // パスワードを表示
+                passwordInput.type = 'text';
+                icon.className = 'far fa-eye';
+            } else {
+                // パスワードを非表示
+                passwordInput.type = 'password';
+                icon.className = 'far fa-eye-slash';
+            }
+        });
+    }
+});
+</script>

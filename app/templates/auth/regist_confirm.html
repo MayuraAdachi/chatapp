@@ -1,34 +1,68 @@
-{% set sub_title = "登録内容確認" %}
+{% set sub_title = _("登録内容の確認") %}
 {% include 'common/header.html' %}
-<div class="container">
-    <div class="form-box">
-        <h2>登録内容の確認</h2>
-        <form method="post" class="confirm-form">
-            <div class="confirm-item">
-                <label>ユーザー名</label>
-                <div class="confirm-value">{{ username }}</div>
-                <input type="hidden" name="username" value="{{ username }}" />
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-check-circle text-info me-2"></i>
+                        {{ _("登録内容の確認") }}
+                    </h2>
+                    <p class="text-center text-muted mb-4">
+                        {{ _("入力内容をご確認ください。間違いがなければ「この内容で登録」をクリックしてください。") }}
+                    </p>
+
+                    <!-- 確認内容 -->
+                    <div class="mb-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ _("ユーザー名") }}</label>
+                            <div class="form-control-plaintext bg-light rounded p-2">{{ username|e }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ _("メールアドレス") }}</label>
+                            <div class="form-control-plaintext bg-light rounded p-2">{{ email|e }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ _("パスワード") }}</label>
+                            <div class="form-control-plaintext bg-light rounded p-2">●●●●●●●●</div>
+                        </div>
+                    </div>
+
+                    <!-- ボタン -->
+                    <div class="d-grid gap-3">
+                        <form method="post" action="{{ url_for('auth.regist_confirm') }}">
+                            <input type="hidden" name="username" value="{{ username|e }}" />
+                            <input type="hidden" name="email" value="{{ email|e }}" />
+                            <input type="hidden" name="password" value="{{ password|e }}" />
+                            <button class="btn btn-success btn-lg w-100" type="submit">
+                                <i class="fas fa-check me-2"></i>{{ _("この内容で登録") }}
+                            </button>
+                        </form>
+
+                        <form method="post" action="{{ url_for('auth.regist') }}">
+                            <input type="hidden" name="username" value="{{ username|e }}" />
+                            <input type="hidden" name="email" value="{{ email|e }}" />
+                            <input type="hidden" name="back_to_form" value="true" />
+                            <button class="btn btn-outline-secondary w-100" type="submit">
+                                <i class="fas fa-edit me-2"></i>{{ _("修正する") }}
+                            </button>
+                        </form>
+
+                        <!-- 区切り線 -->
+                        <div class="position-relative my-2">
+                            <hr class="border-secondary">
+                        </div>
+
+                        <a href="{{ url_for('public.index') }}" class="btn btn-link">
+                            <i class="fas fa-arrow-left me-1"></i>{{ _("トップへ戻る") }}
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="confirm-item">
-                <label>メールアドレス</label>
-                <div class="confirm-value">{{ email }}</div>
-                <input type="hidden" name="email" value="{{ email }}" />
-            </div>
-            <div class="confirm-item">
-                <label>パスワード</label>
-                <div class="confirm-value">（非表示）</div>
-                <input type="hidden" name="password" value="{{ password }}" />
-            </div>
-            <button class="btn regist-btn" type="submit">この内容で登録</button>
-        </form>
-        <form method="post" action="/regist" class="back-form">
-            <input type="hidden" name="username" value="{{ username }}" />
-            <input type="hidden" name="email" value="{{ email }}" />
-            <button class="btn" type="submit">修正する</button>
-        </form>
-        <div style="margin-top:16px;">
-            <a href="/">← トップへ戻る</a>
         </div>
     </div>
-</div>
+</main>
+
 {% include 'common/footer.html' %}

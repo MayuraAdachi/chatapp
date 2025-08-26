@@ -1,14 +1,152 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="{{ request.args.get('lang', session.get('language', 'ja')) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ config['APP_TITLE'] }}{% if sub_title is defined and sub_title %} | {{ sub_title }}{% endif %}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='common/css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='common/css/mobile.css') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Mobile CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/css/mobile.css') }}">
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1 0 auto;
+        }
+        footer {
+            flex-shrink: 0;
+        }
+    </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
-        <h1>{% block header_title %}{{ config['APP_TITLE'] }}{% endblock %}</h1>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <div class="container-fluid">
+                <!-- アプリタイトル -->
+                <div class="d-flex align-items-center">
+                    <a href="{{ url_for('room.index') }}" class="navbar-brand text-decoration-none">
+                        <h1 class="h4 mb-0">{% block header_title %}{{ config['APP_TITLE'] }}{% endblock %}</h1>
+                        <p class="text-muted small mb-0">{{ config['SUB_TITLE'] }}</p>
+                    </a>
+
+                    <!-- 言語切り替え（アプリタイトルの横に配置）-->
+                    <div class="dropdown ms-3">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-globe me-1"></i>
+                            {% set current_lang = request.args.get('lang', session.get('language', 'ja')) %}
+                            {% if current_lang == 'en' %}EN
+                            {% elif current_lang == 'zh' %}中文
+                            {% elif current_lang == 'ko' %}한국어
+                            {% elif current_lang == 'fr' %}FR
+                            {% elif current_lang == 'de' %}DE
+                            {% elif current_lang == 'es' %}ES
+                            {% else %}日本語{% endif %}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if current_lang == 'ja' %}active{% endif %}" href="?lang=ja">
+                                日本語
+                            </a></li>
+                            <li><a class="dropdown-item {% if current_lang == 'en' %}active{% endif %}" href="?lang=en">
+                                English
+                            </a></li>
+                            <li><a class="dropdown-item {% if current_lang == 'zh' %}active{% endif %}" href="?lang=zh">
+                                中文
+                            </a></li>
+                            <li><a class="dropdown-item {% if current_lang == 'ko' %}active{% endif %}" href="?lang=ko">
+                                한국어
+                            </a></li>
+                            <li><a class="dropdown-item {% if current_lang == 'fr' %}active{% endif %}" href="?lang=fr">
+                                Français
+                            </a></li>
+                            <li><a class="dropdown-item {% if current_lang == 'de' %}active{% endif %}" href="?lang=de">
+                                Deutsch
+                            </a></li>
+                            <li><a class="dropdown-item {% if current_lang == 'es' %}active{% endif %}" href="?lang=es">
+                                Español
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    <!-- デバッグモード表示（アプリタイトルの横に配置）-->
+                    {% if config['DEBUG_MODE'] %}
+                    <div class="badge bg-danger text-white ms-2 d-flex align-items-center" title="デバッグモードで実行中">
+                        <i class="fas fa-bug me-1"></i>
+                        <span class="d-none d-sm-inline">DEBUG</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 右側のアクション（ハンバーガーメニューのみ）-->
+                <div class="d-flex align-items-center">
+                    <!-- ハンバーガーメニューボタン（常に表示、ナビメニューがある時のみ機能）-->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                            {% if not username %}style="visibility: hidden;"{% endif %}>
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+                <!-- ナビゲーション（ログイン時のみ表示）-->
+                {% if username %}
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- 設定メニュー（登録ユーザーのみ）-->
+                        {% if is_logged_in %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('auth.settings') }}" class="nav-link">
+                                <i class="fas fa-cog me-2"></i>{{ _("設定") }}
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- 管理者・開発者ダッシュボードメニュー -->
+                        {% if is_admin_or_developer %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('admin.dashboard') }}" class="nav-link">
+                                {% if is_admin %}
+                                    <i class="fas fa-crown me-2 text-warning"></i>{{ _("管理者画面") }}
+                                {% else %}
+                                    <i class="fas fa-code me-2 text-info"></i>{{ _("開発者画面") }}
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- ユーザー情報とログアウト -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center"
+                               href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if is_logged_in %}
+                                    <i class="fas fa-user-circle me-2"></i>{{ username }}
+                                {% else %}
+                                    <i class="fas fa-user-secret me-2"></i>{{ username }}
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-sign-out-alt me-2"></i>{{ _("ログアウト") }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </nav>
     </header>

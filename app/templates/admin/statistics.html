@@ -1,0 +1,183 @@
+{% extends "common/base.html" %}
+{% block title %}詳細統計 - 管理者ダッシュボード{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/statistics.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>詳細統計
+                </h2>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm" onclick="refreshStats()">
+                        <i class="fas fa-sync-alt me-1"></i>更新
+                    </button>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i>ダッシュボードに戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ユーザー統計 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-users me-2"></i>ユーザー統計</h4>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">{{ user_stats.total }}</div>
+                <div class="stat-label">総ユーザー数</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number text-success">{{ user_stats.online }}</div>
+                <div class="stat-label">オンライン中</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number text-warning">{{ user_stats.admins }}</div>
+                <div class="stat-label">管理者・開発者</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number text-info">{{ user_stats.new_this_week }}</div>
+                <div class="stat-label">今週の新規登録</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ルーム統計 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-comments me-2"></i>ルーム統計</h4>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-number">{{ room_stats.total }}</div>
+                <div class="stat-label">総ルーム数</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-number text-success">{{ room_stats.public }}</div>
+                <div class="stat-label">パブリックルーム</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-number text-warning">{{ room_stats.private }}</div>
+                <div class="stat-label">プライベートルーム</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 最も活発なルーム -->
+    {% if room_stats.most_active %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="mb-3"><i class="fas fa-fire me-2"></i>最も活発なルーム</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ルーム名</th>
+                            <th>メッセージ数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for room in room_stats.most_active %}
+                        <tr>
+                            <td>{{ room.name }}</td>
+                            <td>
+                                <span class="badge bg-primary">{{ room.messages }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- メッセージ統計 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-envelope me-2"></i>メッセージ統計</h4>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-number">{{ message_stats.total }}</div>
+                <div class="stat-label">総メッセージ数</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-number text-info">{{ message_stats.today }}</div>
+                <div class="stat-label">今日のメッセージ</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-number text-success">{{ message_stats.this_week }}</div>
+                <div class="stat-label">今週のメッセージ</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- グラフ表示エリア -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">ユーザー構成</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="userChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">ルーム構成</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="roomChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Jinja2変数をJavaScriptで利用可能にする
+window.statsData = {
+    userStats: {
+        online: {{ user_stats.online }},
+        total: {{ user_stats.total }},
+        admins: {{ user_stats.admins }}
+    },
+    roomStats: {
+        public: {{ room_stats.public }},
+        private: {{ room_stats.private }}
+    },
+    apiUrl: "{{ url_for('admin.api_statistics') }}"
+};
+</script>
+<script src="{{ url_for('static', filename='admin/js/statistics.js') }}"></script>
+{% endblock %}

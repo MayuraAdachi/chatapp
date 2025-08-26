@@ -1,0 +1,61 @@
+{% set sub_title = "設定" %}
+{% include 'common/header.html' %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">ユーザー設定</h4>
+                </div>
+                <div class="card-body">
+                    {% if current_user.is_authenticated %}
+                        <form method="POST" action="{{ url_for('auth.settings') }}">
+                            {{ csrf_token() }}
+                            <div class="mb-3">
+                                <label for="username" class="form-label">ユーザー名</label>
+                                <input type="text" class="form-control" id="username" name="username"
+                                       value="{{ current_user.username }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="{{ current_user.email }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="current_password" class="form-label">現在のパスワード</label>
+                                <input type="password" class="form-control" id="current_password"
+                                       name="current_password" placeholder="現在のパスワードを入力してください">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">新しいパスワード（変更する場合のみ）</label>
+                                <input type="password" class="form-control" id="new_password"
+                                       name="new_password" placeholder="新しいパスワードを入力してください">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">新しいパスワード（確認）</label>
+                                <input type="password" class="form-control" id="confirm_password"
+                                       name="confirm_password" placeholder="新しいパスワードを再入力してください">
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">設定を更新</button>
+                                <a href="{{ url_for('public.index') }}" class="btn btn-secondary">キャンセル</a>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <p>設定を変更するには、<a href="{{ url_for('auth.login') }}">ログイン</a>してください。</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'common/footer.html' %}

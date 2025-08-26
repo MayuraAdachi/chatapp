@@ -1,0 +1,310 @@
+{% set sub_title = _("チャットルーム") %}
+{% include 'common/header.html' %}
+
+<!-- Bootstrap Table CSS -->
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='room/css/room_index.css') }}">
+
+<!-- CSRF Token for JavaScript -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<main class="container my-4">
+    {% if username %}
+    <!-- ログイン済みユーザーの表示 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4 border-0 shadow-sm bg-gradient">
+                <div class="card-body p-4 bg-light bg-opacity-50 rounded">
+                    {% if is_logged_in %}
+                    <!-- 登録ユーザー -->
+                    <div class="user-info">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-user-circle fa-2x text-success"></i>
+                            </div>
+                            <div>
+                                <strong>{{ _("ようこそ") }}、{{ username }}{{ _("さん") }}</strong>
+                                <div class="small text-muted">
+                                    <i class="fas fa-shield-alt me-1"></i>{{ _("登録ユーザー") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- 匿名ユーザー -->
+                    <div class="user-info">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-user-secret fa-2x text-info"></i>
+                            </div>
+                            <div>
+                                <strong>{{ _("ようこそ") }}、{{ username }}{{ _("さん") }}</strong>
+                                <div class="small text-muted">
+                                    <i class="fas fa-user-secret me-1"></i>{{ _("匿名ユーザー") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- 未ログイン時の名前入力フォーム -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title mb-3">{{ _("チャットに参加") }}</h3>
+                    <p class="card-text mb-4">
+                        {{ _("チャットに参加するには名前を入力してください") }}
+                    </p>
+                    <form method="post" action="{{ url_for('room.index') }}">
+                        {{ anonymous_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ anonymous_form.username(placeholder=_("ニックネーム"), class="form-control form-control-lg") }}
+                            {% if anonymous_form.username.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in anonymous_form.username.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <button class="btn btn-primary btn-lg w-100" type="submit">
+                            <i class="fas fa-sign-in-alt me-2"></i>{{ _("参加") }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if username %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4">
+                    <div class="row g-3 align-items-center">
+                        {% if is_logged_in %}
+                        <!-- ルーム作成 -->
+                        <div class="col-md-4">
+                            <button class="btn btn-success w-100 rounded-2 btn-create-room shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#createRoomModal"
+                                style="transition: all 0.2s ease-in-out;">
+                                <i class="fas fa-plus me-2"></i>{{ _("新しいルームを作成") }}
+                            </button>
+                        </div>
+                        <!-- 検索ボックス -->
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm rounded-2 overflow-hidden">
+                                <span class="input-group-text bg-light border-end-0 text-muted rounded-start-2">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0 border-end-0 ps-2 bg-white"
+                                    id="quickSearchInput" placeholder="{{ _('ルーム名や説明で検索...') }}" autocomplete="off">
+                                <button class="btn btn-outline-secondary border-start-0 rounded-end-2" type="button"
+                                    id="clearQuickSearch" title="{{ _('検索をクリア') }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% else %}
+                        <!-- 匿名ユーザー用（検索のみ） -->
+                        <div class="col-md-6 offset-md-2">
+                            <div class="input-group shadow-sm rounded-2 overflow-hidden">
+                                <span class="input-group-text bg-light border-end-0 text-muted rounded-start-2">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0 border-end-0 ps-2 bg-white"
+                                    id="quickSearchInput" placeholder="{{ _('ルーム名や説明で検索...') }}" autocomplete="off">
+                                <button class="btn btn-outline-secondary border-start-0 rounded-end-2" type="button"
+                                    id="clearQuickSearch" title="{{ _('検索をクリア') }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- チャットルーム一覧 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow rounded-3">
+                <div class="card-header bg-light bg-gradient border-0 rounded-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 text-dark">
+                            <i class="fas fa-comments me-2 text-success"></i>{{ _("利用可能なルーム") }}
+                        </h4>
+                        <small class="text-muted room-count">{{ rooms|length }} {{ _("件") }}</small>
+                    </div>
+                </div>
+                <div class="card-body p-2">
+                    {% if rooms %}
+                    <!-- Bootstrap Table -->
+                    <table id="roomTable" class="table table-striped table-hover shadow-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th data-field="actions" data-align="center" data-width="180" data-sortable="false">
+                                    <i class="fas fa-cogs me-1 text-dark"></i>{{ _("操作") }}
+                                </th>
+                                <th data-field="name" data-sortable="true" data-searchable="true" class="sortable">
+                                    <i class="fas fa-hashtag me-1 text-primary"></i>{{ _("ルーム名") }}
+                                </th>
+                                <th data-field="description" data-sortable="true" data-searchable="true"
+                                    class="sortable">
+                                    <i class="fas fa-info-circle me-1 text-info"></i>{{ _("説明") }}
+                                </th>
+                                <th data-field="members" data-sortable="true" data-align="center" data-width="120"
+                                    class="sortable">
+                                    <i class="fas fa-users me-1 text-success"></i>{{ _("メンバー") }}
+                                </th>
+                                <th data-field="creator" data-sortable="true" data-searchable="true" class="sortable">
+                                    <i class="fas fa-user me-1 text-secondary"></i>{{ _("作成者") }}
+                                </th>
+                                <th data-field="created_at" data-sortable="true" class="sortable">
+                                    <i class="fas fa-clock me-1 text-muted"></i>{{ _("作成日時") }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for room in rooms %}
+                            <tr data-room-id="{{ room.id }}">
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-center" role="group">
+                                        <button class="btn btn-success btn-sm px-3 py-2 shadow-sm"
+                                            onclick="joinRoom('{{ room.id }}', '{{ room.name }}')"
+                                            title="{{ _('ルームに参加') }}">
+                                            <i class="fas fa-sign-in-alt me-1"></i>{{ _('参加') }}
+                                        </button>
+                                        {% set can_delete = false %}
+                                        {% if is_admin or is_developer %}
+                                        {% set can_delete = true %}
+                                        {% elif is_logged_in and room.created_by_user_id and user_id and (user_id|string
+                                        == room.created_by_user_id|string) %}
+                                        {% set can_delete = true %}
+                                        {% endif %}
+                                        {% if can_delete %}
+                                        <button class="btn btn-outline-danger btn-sm px-3 py-2 shadow-sm"
+                                            onclick="deleteRoom('{{ room.id }}', '{{ room.name }}')"
+                                            title="{{ _('ルームを削除') }}">
+                                            <i class="fas fa-trash me-1"></i>{{ _('削除') }}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td data-value="{{ room.name }}">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-hashtag text-primary me-2"></i>
+                                        <div>
+                                            <strong>{{ room.name }}</strong>
+                                            {% if room.description %}
+                                            <br><small class="text-muted">{{ room.description[:50] }}{% if
+                                                room.description|length > 50 %}...{% endif %}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-value="{{ room.description or '' }}">{{ room.description or '' }}</td>
+                                <td data-value="{{ room.member_count or 0 }}">
+                                    <span class="badge bg-info">
+                                        {{ room.member_count or 0 }}/{{ room.max_members }}
+                                    </span>
+                                </td>
+                                <td data-value="{{ get_room_owner(room) or _('不明') }}">
+                                    <small class="text-muted">{{ get_room_owner(room) or _("不明") }}</small>
+                                </td>
+                                <td data-value="{{ room.created_at.timestamp() if room.created_at else 0 }}">{{
+                                    room.created_at.strftime('%Y-%m-%d %H:%M') if room.created_at else '' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">{{ _("現在利用可能なルームはありません") }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ルーム作成モーダル -->
+<div class="modal fade" id="createRoomModal" tabindex="-1" aria-labelledby="createRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{{ url_for('room.create_room') }}" id="createRoomForm">
+                {{ create_form.hidden_tag() }}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createRoomModalLabel">
+                        <i class="fas fa-plus me-2"></i>{{ _("新しいルームを作成") }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        {{ create_form.room_name.label(class="form-label") }}
+                        <span class="text-danger align-middle">*</span>
+                        {{ create_form.room_name(class="form-control", placeholder=_("例: 全体チャット"), maxlength="100") }}
+                        <div class="form-text small">{{ _("最大100文字まで入力できます") }}</div>
+                        <div class="invalid-feedback" id="roomNameError"></div>
+                    </div>
+                    <div class="mb-3">
+                        {{ create_form.room_description.label(class="form-label") }}
+                        <span class="text-muted">({{ _("任意") }})</span>
+                        {{ create_form.room_description(class="form-control", placeholder=_("ルームの説明を入力してください..."),
+                        maxlength="500", rows="3") }}
+                        <div class="form-text small">{{ _("最大500文字まで入力できます") }}</div>
+                        <div class="invalid-feedback" id="roomDescError"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ create_form.max_members.label(class="form-label") }}
+                                <span class="text-danger align-middle">*</span>
+                                {{ create_form.max_members(class="form-control", min="2", max="100") }}
+                                <div class="invalid-feedback" id="maxMembersError"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ create_form.room_password.label(class="form-label") }}
+                                <span class="text-muted">({{ _("任意") }})</span>
+                                {{ create_form.room_password(class="form-control", placeholder=_("4〜32文字の半角英数字"),
+                                maxlength="32") }}
+                                <div class="form-text small">{{ _("パスワードを設定すると参加時に入力が必要になります") }}</div>
+                                <div class="invalid-feedback" id="roomPasswordError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>{{ _("キャンセル") }}
+                    </button>
+                    <button type="submit" class="btn btn-success" id="createRoomSubmit">
+                        <i class="fas fa-plus me-1"></i>{{ _("作成") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'common/footer.html' %}
+
+<!-- Bootstrap Table JS -->
+<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/locale/bootstrap-table-ja-JP.min.js"></script>
+<script src="{{ url_for('static', filename='room/js/room_index_bootstrap_table.js') }}"></script>
+<script src="{{ url_for('static', filename='room/js/room_index.js') }}"></script>

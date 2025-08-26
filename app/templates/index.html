@@ -1,30 +1,82 @@
-{% set sub_title = "トップページ" %}
+{% set sub_title = _("トップ") %}
 {% include 'common/header.html' %}
-<div class="container">
-    <div class="form-box">
-        <h2>ログイン</h2>
-        <form method="post" class="login-form">
-            <div class="input-group">
-                <input name="username" placeholder="ユーザー名 または メールアドレス" class="input-full login-input" />
-                {% if errors and errors.username %}
-                    <div class="error-message">{{ errors.username }}</div>
-                {% endif %}
+
+<main class="container my-4">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else ('warning' if category == 'warning' else ('info' if category == 'info' else 'success')) }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="input-group">
-                <input name="password" type="password" placeholder="パスワード" class="input-full login-input" />
-                {% if errors and errors.password %}
-                    <div class="error-message">{{ errors.password }}</div>
-                {% endif %}
-            </div>
-            <button class="btn login-btn" type="submit">ログイン</button>
-        </form>
-        <div class="or">または</div>
-        <form method="get" action="{{ url_for('auth.regist') }}" class="regist-form">
-            <button class="btn regist-btn" type="submit">アカウントを作成</button>
-        </form>
-        <div style="margin-top:16px;">
-            <a href="/">← トップへ戻る</a>
+            {% endfor %}
         </div>
     </div>
-</div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <h2 class="card-title">
+                            <i class="fas fa-comments text-primary me-2"></i>
+                            {{ config['APP_TITLE'] }}{{ _("へようこそ") }}
+                        </h2>
+                        <p class="card-subtitle text-muted mb-3">{{ config['SUB_TITLE'] }}</p>
+                        <p class="card-text">
+                            {{ _("アカウントでログインするか、新規登録してご利用ください") }}<br>
+                            <small class="text-muted">{{ _("アカウント登録なしでも匿名でご参加いただけます") }}</small>
+                        </p>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <!-- ログインボタン -->
+                        <form method="get" action="{{ url_for('auth.login') }}">
+                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                                <i class="fas fa-sign-in-alt me-2"></i>{{ _("ログイン") }}
+                            </button>
+                            <small class="text-muted d-block mt-1">{{ _("既にアカウントをお持ちの方") }}</small>
+                        </form>
+
+                        <!-- アカウント作成ボタン -->
+                        <form method="get" action="{{ url_for('auth.regist') }}">
+                            <button class="btn btn-success btn-lg w-100" type="submit">
+                                <i class="fas fa-user-plus me-2"></i>{{ _("アカウント作成") }}
+                            </button>
+                            <small class="text-muted d-block mt-1">{{ _("新規でアカウントを作成する方") }}</small>
+                        </form>
+
+                        <!-- 区切り線 -->
+                        <div class="position-relative my-2">
+                            <hr class="border-secondary">
+                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted">
+                                {{ _("または") }}
+                            </span>
+                        </div>
+
+                        <!-- 匿名参加フォーム -->
+                        <form method="post" action="{{ url_for('room.index') }}">
+                            <div class="mb-3">
+                                <input name="username" type="text"
+                                       placeholder="{{ _("ニックネーム（匿名参加用）") }}"
+                                       class="form-control form-control-lg"
+                                       required />
+                            </div>
+                            <button class="btn btn-outline-secondary btn-lg w-100" type="submit">
+                                <i class="fas fa-user-secret me-2"></i>{{ _("匿名で参加") }}
+                            </button>
+                            <small class="text-muted d-block mt-1">{{ _("アカウント登録なしで参加") }}</small>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
 {% include 'common/footer.html' %}

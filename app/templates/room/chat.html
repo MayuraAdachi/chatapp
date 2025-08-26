@@ -1,0 +1,62 @@
+{% set sub_title = _("ルーム") %}
+{% include 'common/header.html' %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='room/css/room_chat.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+{% block content %}
+<div class="chat-container d-flex flex-column bg-light">
+    <!-- ヘッダー -->
+    <header class="chat-header bg-primary text-white shadow-sm flex-shrink-0">
+        <div class="container-fluid px-3 py-2 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <a href="{{ url_for('room.index') }}" class="btn btn-link text-white p-1 me-2" title="ルーム一覧に戻る">
+                    <i class="bi bi-arrow-left fs-5"></i>
+                </a>
+                <span class="fs-5 fw-bold">{{ room.name }}</span>
+                <span class="badge bg-secondary ms-2">{{ room.max_members }}人まで</span>
+            </div>
+            <div>
+                <button id="confirmLeaveRoom" class="btn btn-outline-light btn-sm me-2" title="退出"><i class="bi bi-box-arrow-right"></i></button>
+                {% if is_owner or is_admin %}
+                <button id="saveRoomSettings" class="btn btn-outline-light btn-sm" title="設定"><i class="bi bi-gear"></i></button>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- メッセージ表示エリア -->
+    <main class="chat-main flex-grow-1 overflow-auto px-2 py-3" id="chatMessages">
+        <div id="connectingMessage" class="text-center text-muted my-4">チャットサーバーに接続中...</div>
+        <div id="alertContainer"></div>
+        <!-- メッセージはJSで描画 -->
+    </main>
+
+    <!-- 入力欄 -->
+    <footer class="chat-footer bg-white shadow-sm flex-shrink-0 py-2">
+        <form id="messageForm" class="container-fluid d-flex align-items-center gap-2">
+            <textarea id="messageInput" class="form-control flex-grow-1" rows="1" maxlength="500" placeholder="メッセージを入力..."></textarea>
+            <button id="sendButton" type="submit" class="btn btn-primary px-3"><i class="bi bi-send"></i></button>
+            <span id="messageLength" class="text-muted small ms-2">0</span>
+            <button id="emojiButton" type="button" class="btn btn-outline-secondary btn-sm ms-2"><i class="bi bi-emoji-smile"></i></button>
+        </form>
+        <div id="emojiPickerContainer" class="mt-2 d-none"></div>
+    </footer>
+</div>
+
+<script>
+    window.chatData = {
+        roomId: {{ room.id | tojson }},
+        roomName: {{ room.name | tojson }},
+        roomDescription: {{ (room.description or '') | tojson }},
+        username: {{ username | tojson }},
+        userId: {{ user_id | tojson }},
+        isOwner: {{ is_owner | tojson }},
+        isAdmin: {{ is_admin | tojson }},
+        maxMembers: {{ room.max_members | tojson }}
+    };
+    console.log(window.chatData);
+</script>
+<script src="{{ url_for('static', filename='room/js/room_chat_simple.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,231 @@
+{% set sub_title = _("管理者ダッシュボード") if is_admin else _("開発者ダッシュボード") %}
+{% include 'common/header.html' %}
+
+<main class="container my-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3">
+                    {% if is_admin %}
+                        <i class="fas fa-crown text-warning me-2"></i>{{ _("管理者ダッシュボード") }}
+                    {% else %}
+                        <i class="fas fa-code text-info me-2"></i>{{ _("開発者ダッシュボード") }}
+                    {% endif %}
+                </h2>
+                <div class="badge bg-{{ 'warning' if is_admin else 'info' }} fs-6">
+                    {{ user.role.upper() }}
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message|e }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- 統計情報 -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <h4>{{ stats.total_users }}</h4>
+                            <p class="mb-0">{{ _("総ユーザー数") }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-comments fa-2x mb-2"></i>
+                            <h4>{{ stats.total_rooms }}</h4>
+                            <p class="mb-0">{{ _("総ルーム数") }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-envelope fa-2x mb-2"></i>
+                            <h4>{{ stats.total_messages }}</h4>
+                            <p class="mb-0">{{ _("総メッセージ数") }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body text-center">
+                            <i class="fas fa-crown fa-2x mb-2"></i>
+                            <h4>{{ stats.admin_users }}</h4>
+                            <p class="mb-0">{{ _("管理者") }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ユーザー役割別統計 -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ _("ユーザー役割別統計") }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-warning me-2">Admin</span>
+                                        <div class="progress flex-grow-1 me-2">
+                                            <div class="progress-bar bg-warning" style="width: {{ (stats.admin_users / stats.total_users * 100) if stats.total_users > 0 else 0 }}%"></div>
+                                        </div>
+                                        <span class="text-muted">{{ stats.admin_users }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-info me-2">Developer</span>
+                                        <div class="progress flex-grow-1 me-2">
+                                            <div class="progress-bar bg-info" style="width: {{ (stats.developer_users / stats.total_users * 100) if stats.total_users > 0 else 0 }}%"></div>
+                                        </div>
+                                        <span class="text-muted">{{ stats.developer_users }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-secondary me-2">Member</span>
+                                        <div class="progress flex-grow-1 me-2">
+                                            <div class="progress-bar bg-secondary" style="width: {{ (stats.member_users / stats.total_users * 100) if stats.total_users > 0 else 0 }}%"></div>
+                                        </div>
+                                        <span class="text-muted">{{ stats.member_users }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 機能メニュー -->
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="mb-3">{{ _("管理機能") }}</h4>
+                </div>
+
+                <!-- 共通機能（管理者・開発者） -->
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-info-circle fa-3x text-primary mb-3"></i>
+                            <h5>{{ _("システム情報") }}</h5>
+                            <p class="text-muted">{{ _("システムの詳細情報を確認") }}</p>
+                            <a href="{{ url_for('admin.system_info') }}" class="btn btn-primary">
+                                {{ _("詳細表示") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-tools fa-3x text-info mb-3"></i>
+                            <h5>{{ _("開発者ツール") }}</h5>
+                            <p class="text-muted">{{ _("デバッグとトラブルシューティング") }}</p>
+                            <a href="{{ url_for('admin.developer_tools') }}" class="btn btn-info">
+                                {{ _("ツールを開く") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 管理者専用機能 -->
+                {% if is_admin %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users-cog fa-3x text-warning mb-3"></i>
+                            <h5>{{ _("ユーザー管理") }}</h5>
+                            <p class="text-muted">{{ _("ユーザーの役割とアカウント管理") }}</p>
+                            <a href="{{ url_for('admin.user_management') }}" class="btn btn-warning">
+                                {{ _("管理画面") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-key fa-3x text-danger mb-3"></i>
+                            <h5>{{ _("パスワードリセット") }}</h5>
+                            <p class="text-muted">{{ _("ユーザーのパスワードを管理者がリセット") }}</p>
+                            <a href="{{ url_for('admin.password_reset_tool') }}" class="btn btn-danger">
+                                {{ _("リセットツール") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-language fa-3x text-success mb-3"></i>
+                            <h5>{{ _("言語管理") }}</h5>
+                            <p class="text-muted">{{ _("多言語対応の設定と管理") }}</p>
+                            <a href="{{ url_for('admin.language_admin') }}" class="btn btn-success">
+                                {{ _("言語設定") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                            <h5>{{ _("詳細統計") }}</h5>
+                            <p class="text-muted">{{ _("ユーザー・ルーム・メッセージの詳細統計") }}</p>
+                            <a href="{{ url_for('admin.detailed_statistics') }}" class="btn btn-info">
+                                {{ _("統計を見る") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- 開発者限定機能 -->
+                {% if is_developer %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-terminal fa-3x text-dark mb-3"></i>
+                            <h5>{{ _("システムログ") }}</h5>
+                            <p class="text-muted">{{ _("アプリケーションログとシステム監視") }}</p>
+                            <a href="{{ url_for('admin.system_logs') }}" class="btn btn-dark">
+                                {{ _("ログを見る") }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- 戻るボタン -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <a href="{{ url_for('room.index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>{{ _("チャットに戻る") }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include 'common/footer.html' %}

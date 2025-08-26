@@ -1,0 +1,155 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-08-17 19:04+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/templates/index.html:1
+msgid "トップ"
+msgstr ""
+
+#: app/templates/index.html:7
+msgid "へようこそ"
+msgstr ""
+
+#: app/templates/index.html:9
+msgid "アカウントでログインするか、新規登録してご利用ください。"
+msgstr ""
+
+#: app/templates/index.html:9
+msgid "アカウント登録なしでも匿名でご参加いただけます。"
+msgstr ""
+
+#: app/templates/auth/login.html:7 app/templates/auth/login.html:45
+#: app/templates/index.html:14 app/templates/room/index.html:24
+#: app/templates/room/index.html:46
+msgid "ログイン"
+msgstr ""
+
+#: app/templates/index.html:16
+msgid "既にアカウントをお持ちの方"
+msgstr ""
+
+#: app/templates/index.html:21
+msgid "アカウント作成"
+msgstr ""
+
+#: app/templates/index.html:23
+msgid "新規でアカウントを作成する方"
+msgstr ""
+
+#: app/templates/auth/login.html:50 app/templates/index.html:27
+#: app/templates/room/index.html:39
+msgid "または"
+msgstr ""
+
+#: app/templates/index.html:32
+msgid "ニックネーム（匿名参加）"
+msgstr ""
+
+#: app/templates/index.html:35 app/templates/room/index.html:35
+msgid "匿名で参加"
+msgstr ""
+
+#: app/templates/index.html:37
+msgid "アカウント登録なしで参加"
+msgstr ""
+
+#: app/templates/auth/login.html:8
+msgid "ユーザー名またはメールアドレスとパスワードを入力してログインしてください。"
+msgstr ""
+
+#: app/templates/auth/login.html:32
+msgid "ユーザー名またはメールアドレス"
+msgstr ""
+
+#: app/templates/auth/login.html:38 app/templates/auth/regist_confirm.html:20
+msgid "パスワード"
+msgstr ""
+
+#: app/templates/auth/login.html:55 app/templates/room/index.html:21
+#: app/templates/room/index.html:43
+msgid "アカウントを作成"
+msgstr ""
+
+#: app/templates/auth/login.html:60 app/templates/auth/regist_confirm.html:45
+msgid "トップへ戻る"
+msgstr ""
+
+#: app/templates/auth/regist_confirm.html:1
+msgid "登録内容確認"
+msgstr ""
+
+#: app/templates/auth/regist_confirm.html:7
+msgid "登録内容の確認"
+msgstr ""
+
+#: app/templates/auth/regist_confirm.html:8
+msgid "入力内容をご確認ください。間違いがなければ「この内容で登録」をクリックしてください。"
+msgstr ""
+
+#: app/templates/auth/regist_confirm.html:12
+msgid "ユーザー名"
+msgstr ""
+
+#: app/templates/auth/regist_confirm.html:16
+msgid "メールアドレス"
+msgstr ""
+
+#: app/templates/auth/regist_confirm.html:31
+msgid "この内容で登録"
+msgstr ""
+
+#: app/templates/auth/regist_confirm.html:39
+msgid "修正する"
+msgstr ""
+
+#: app/templates/common/header.html:55
+msgid "その他"
+msgstr ""
+
+#: app/templates/room/index.html:1
+msgid "ルーム一覧"
+msgstr ""
+
+#: app/templates/room/index.html:11 app/templates/room/index.html:18
+msgid "ようこそ"
+msgstr ""
+
+#: app/templates/room/index.html:11 app/templates/room/index.html:18
+msgid "さん"
+msgstr ""
+
+#: app/templates/room/index.html:11
+msgid "登録ユーザー"
+msgstr ""
+
+#: app/templates/room/index.html:14
+msgid "ログアウト"
+msgstr ""
+
+#: app/templates/room/index.html:18
+msgid "匿名ユーザー"
+msgstr ""
+
+#: app/templates/room/index.html:29
+msgid "チャットに参加するには名前を入力してください。"
+msgstr ""
+
+#: app/templates/room/index.html:32
+msgid "あなたの名前"
+msgstr ""
+

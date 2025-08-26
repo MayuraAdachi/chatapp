@@ -1,0 +1,135 @@
+/* ルーム一覧画面 - Bootstrap Table専用最小限カスタムスタイル */
+
+/* 緑テーマ統一（Bootstrap 5で代用できない部分のみ） */
+:root {
+    --theme-green: #28a745;
+    --theme-green-light: rgba(40, 167, 69, 0.1);
+    --theme-green-focus: rgba(40, 167, 69, 0.25);
+}
+
+/* フォーカス色とホバーエフェクト */
+.form-control:focus,
+.input-group .form-control:focus {
+    border-color: var(--theme-green);
+    box-shadow: 0 0 0 0.2rem var(--theme-green-focus);
+}
+
+.btn-create-room:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.input-group .btn-outline-secondary:hover {
+    background-color: var(--theme-green);
+    border-color: var(--theme-green);
+}
+
+/* Bootstrap Table 必須カスタマイズ */
+.bootstrap-table .fixed-table-toolbar .search input:focus {
+    border-color: var(--theme-green);
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+    outline: 0;
+}
+
+.bootstrap-table .fixed-table-header th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.bootstrap-table .fixed-table-header th.sortable:after {
+    content: '\f0dc';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.3;
+    font-size: 0.75rem;
+}
+
+.bootstrap-table .fixed-table-header th.sortable.ascending:after {
+    content: '\f0de';
+    opacity: 0.8;
+    color: var(--theme-green);
+}
+
+.bootstrap-table .fixed-table-header th.sortable.descending:after {
+    content: '\f0dd';
+    opacity: 0.8;
+    color: var(--theme-green);
+}
+
+.bootstrap-table .fixed-table-body tbody tr:hover {
+    background-color: var(--theme-green-light);
+}
+
+/* Bootstrap Tableページネーションの最小限カスタマイズ */
+.bootstrap-table .fixed-table-pagination .page-item.active .page-link {
+    background-color: var(--theme-green);
+    border-color: var(--theme-green);
+    color: white !important;
+}
+
+.bootstrap-table .fixed-table-pagination .page-link {
+    color: var(--theme-green);
+}
+
+.bootstrap-table .fixed-table-pagination .page-link:hover {
+    color: #1e7e34;
+    background-color: var(--theme-green-light);
+    border-color: var(--theme-green);
+}
+
+/* Bootstrap Tableの標準情報表示を非表示 */
+.bootstrap-table .fixed-table-pagination .pagination-detail {
+    display: none !important;
+}
+
+/* 操作ボタンの視認性向上 */
+.bootstrap-table .fixed-table-body tbody td .btn {
+    min-width: 70px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.bootstrap-table .fixed-table-body tbody td .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bootstrap-table .fixed-table-body tbody td .btn-success {
+    background-color: var(--theme-green);
+    border-color: var(--theme-green);
+}
+
+.bootstrap-table .fixed-table-body tbody td .btn-success:hover {
+    background-color: #1e7e34;
+    border-color: #1c7430;
+}
+
+.bootstrap-table .fixed-table-body tbody td .btn-outline-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* ページネーション情報の表示スタイル */
+#pagination-info-top,
+#pagination-info-bottom {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-align: right;
+    margin: 0.5rem 0;
+}
+
+/* レスポンシブ対応（Bootstrap 5で代用できない部分のみ） */
+@media (max-width: 767.98px) {
+    .bootstrap-table .fixed-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .bootstrap-table .fixed-table-container table {
+        min-width: 37.5rem;
+    }
+}

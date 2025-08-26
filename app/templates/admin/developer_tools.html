@@ -1,0 +1,209 @@
+{% set sub_title = _("開発者ツール") %}
+{% include 'common/header.html' %}
+
+<main class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-tools text-info me-2"></i>{{ _("開発者ツール") }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message|e }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <div class="row">
+                        <!-- データベース情報 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-database me-2"></i>{{ _("データベース操作") }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted">{{ _("データベースの状態確認と基本操作") }}</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary" onclick="checkDbConnection()">
+                                            <i class="fas fa-plug me-2"></i>{{ _("接続確認") }}
+                                        </button>
+                                        <button class="btn btn-outline-info" onclick="showTableInfo()">
+                                            <i class="fas fa-table me-2"></i>{{ _("テーブル情報") }}
+                                        </button>
+                                        {% if is_admin %}
+                                        <button class="btn btn-outline-warning" onclick="optimizeDatabase()">
+                                            <i class="fas fa-wrench me-2"></i>{{ _("最適化実行") }}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- キャッシュ・セッション管理 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-memory me-2"></i>{{ _("キャッシュ・セッション") }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted">{{ _("キャッシュとセッションの管理") }}</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-success" onclick="checkCacheStatus()">
+                                            <i class="fas fa-chart-line me-2"></i>{{ _("キャッシュ状況") }}
+                                        </button>
+                                        <button class="btn btn-outline-primary" onclick="showSessionInfo()">
+                                            <i class="fas fa-users me-2"></i>{{ _("セッション情報") }}
+                                        </button>
+                                        {% if is_admin %}
+                                        <button class="btn btn-outline-danger" onclick="clearCache()">
+                                            <i class="fas fa-trash me-2"></i>{{ _("キャッシュクリア") }}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ログ・モニタリング -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>{{ _("ログ・モニタリング") }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted">{{ _("システムログとパフォーマンス情報") }}</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-info" onclick="showRecentLogs()">
+                                            <i class="fas fa-file-alt me-2"></i>{{ _("最新ログ") }}
+                                        </button>
+                                        <button class="btn btn-outline-primary" onclick="showErrorLogs()">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>{{ _("エラーログ") }}
+                                        </button>
+                                        <button class="btn btn-outline-success" onclick="showPerformanceStats()">
+                                            <i class="fas fa-tachometer-alt me-2"></i>{{ _("パフォーマンス") }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 翻訳・言語管理 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-language me-2"></i>{{ _("翻訳・言語管理") }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted">{{ _("多言語対応の管理と翻訳データ") }}</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary" onclick="checkTranslations()">
+                                            <i class="fas fa-search me-2"></i>{{ _("翻訳状況確認") }}
+                                        </button>
+                                        {% if is_admin %}
+                                        <a href="{{ url_for('admin.language_admin') }}" class="btn btn-outline-success">
+                                            <i class="fas fa-cogs me-2"></i>{{ _("言語管理画面") }}
+                                        </a>
+                                        <button class="btn btn-outline-info" onclick="updateTranslations()">
+                                            <i class="fas fa-sync me-2"></i>{{ _("翻訳データ更新") }}
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 実行結果表示エリア -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-terminal me-2"></i>{{ _("実行結果") }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <pre id="tool-output" class="bg-dark text-light p-3 rounded" style="min-height: 200px; max-height: 400px; overflow-y: auto;">{{ _("ツールの実行結果がここに表示されます。") }}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 戻るボタン -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>{{ _("ダッシュボードに戻る") }}
+                                </a>
+                                <a href="{{ url_for('admin.system_info') }}" class="btn btn-outline-info">
+                                    <i class="fas fa-info-circle me-2"></i>{{ _("システム情報") }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+// Jinja2変数をJavaScriptで利用可能にする
+window.devToolsData = {
+    messages: {
+        checkingDbConnection: "{{ _('データベース接続を確認中...') }}",
+        dbConnectionNormal: "{{ _('データベース接続: 正常') }}",
+        dbConnectionFailed: "{{ _('データベース接続: 失敗') }}",
+        dbConnectionError: "{{ _('データベース接続確認中にエラーが発生しました') }}",
+        gettingTableInfo: "{{ _('テーブル情報を取得中...') }}",
+        tableInfoNotImplemented: "{{ _('テーブル情報取得機能は今後実装予定です') }}",
+        checkingCache: "{{ _('キャッシュ状況を確認中...') }}",
+        cacheDisabled: "{{ _('キャッシュ機能は現在無効です') }}",
+        gettingSessionInfo: "{{ _('セッション情報を取得中...') }}",
+        checkingTranslations: "{{ _('翻訳状況を確認中...') }}",
+        languageCount: "{{ _('対応言語数') }}",
+        defaultLanguage: "{{ _('デフォルト言語') }}",
+        confirmOptimizeDb: "{{ _('データベースの最適化を実行しますか？') }}",
+        optimizingDb: "{{ _('データベース最適化を実行中...') }}",
+        optimizeNotImplemented: "{{ _('最適化機能は今後実装予定です') }}",
+        confirmClearCache: "{{ _('キャッシュをクリアしますか？') }}",
+        clearingCache: "{{ _('キャッシュクリア中...') }}",
+        cacheCleared: "{{ _('キャッシュクリア完了（現在キャッシュ機能は無効）') }}",
+        updatingTranslations: "{{ _('翻訳データを更新中...') }}",
+        translationsNotImplemented: "{{ _('翻訳データ更新機能は今後実装予定です') }}",
+        showingRecentLogs: "{{ _('最新ログを表示中...') }}",
+        logsNotImplemented: "{{ _('ログ機能は今後実装予定です') }}",
+        showingErrorLogs: "{{ _('エラーログを表示中...') }}",
+        errorLogsNotImplemented: "{{ _('エラーログ機能は今後実装予定です') }}",
+        gettingPerformanceStats: "{{ _('パフォーマンス情報を取得中...') }}",
+        performanceNotImplemented: "{{ _('パフォーマンス監視機能は今後実装予定です') }}",
+        toolsLoaded: "{{ _('開発者ツールが読み込まれました') }}",
+        adminAccess: "{{ _('管理者権限でアクセスしています') }}",
+        developerAccess: "{{ _('開発者権限でアクセスしています') }}"
+    },
+    session: {
+        username: "{{ session.get('username', 'Anonymous') }}",
+        user_id: "{{ session.get('user_id', 'N/A') }}",
+        is_logged_in: {{ 'true' if session.get('is_logged_in') else 'false' }}
+    },
+    config: {
+        languageCount: {{ config.get("LANGUAGES", {})|length }},
+        defaultLocale: "{{ config.get('BABEL_DEFAULT_LOCALE', 'ja') }}"
+    },
+    user: {
+        is_admin: {{ 'true' if is_admin else 'false' }}
+    }
+};
+</script>
+<script src="{{ url_for('static', filename='admin/js/developer_tools.js') }}"></script>
+
+{% include 'common/footer.html' %}

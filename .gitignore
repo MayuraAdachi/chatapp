@@ -21,3 +21,6 @@ Thumbs.db
 
 # その他
 *.log
+
+# Uploads
+app/static/uploads/
