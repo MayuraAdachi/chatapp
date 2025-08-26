@@ -1,7 +1,9 @@
-</body>
-<footer>
-        <p>© {{ config['VERSION'] }} {{ config['APP_TITLE'] }}</p>
-    </footer>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-3gJwYp4gU1Q9QnN6QJ8QF3yDkLkzF6l2P6N9gA+9g5w=" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='validation.js') }}"></script>
+        <footer>
+            <p>© {{ config['VERSION'] }} {{ config['APP_TITLE'] }}</p>
+        </footer>
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.js"
+            integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='common/js/validation.js') }}"></script>
+        <script src="{{ url_for('static', filename='common/js/common.js') }}"></script>
+    </body>
 </html>

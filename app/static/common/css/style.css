@@ -1,0 +1,167 @@
+@charset "utf-8";
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 32px;
+    color: #888;
+    font-size: 0.95em;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-box {
+    background: #f9f9f9;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #eee;
+}
+
+.form-box h2 {
+    margin-top: 0;
+}
+
+.btn {
+    margin-top: 12px;
+    width: 100%;
+}
+
+.or {
+    text-align: center;
+    margin: 16px 0;
+    color: #888;
+}
+
+#room-list {
+    margin-top: 30px;
+}
+
+.room {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.room-name {
+    flex: 1;
+}
+
+.delete-btn {
+    margin-left: 10px;
+}
+
+#create-room {
+    margin-bottom: 20px;
+}
+
+#chat {
+    border: 1px solid #ccc;
+    height: 300px;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+#msg {
+    width: 80%;
+}
+
+#send {
+    width: 15%;
+}
+
+.input-group {
+    margin-bottom: 8px;
+}
+
+.input-full {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.login-form {
+    margin-top: 8px;
+}
+
+.login-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.login-btn {
+    background: #4a90e2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1em;
+    transition: background 0.2s;
+}
+
+.login-btn:hover {
+    background: #357ab8;
+}
+
+.enter-btn {
+    background: #43b97f;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1em;
+    width: 100%;
+    margin-top: 12px;
+    transition: background 0.2s;
+}
+
+.enter-btn:hover {
+    background: #2e8b5c;
+}
+
+.regist-btn {
+    background: #f5a623;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1em;
+    width: 100%;
+    margin-top: 12px;
+    transition: background 0.2s;
+}
+
+.regist-btn:hover {
+    background: #c97a0a;
+}
+
+.input-group:has(.error-message:not(:empty)) input {
+    border: 1px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+}

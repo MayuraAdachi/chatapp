@@ -2,12 +2,26 @@
 # チャットルームのデータ管理（SQLAlchemyモデル版）
 
 from app.extensions import db
+from sqlalchemy.dialects.postgresql import ENUM
+from datetime import datetime
+
+room_type_enum = ENUM('group', 'one_on_one', name='room_type', create_type=False)
 
 class Room(db.Model):
     __tablename__ = 'rooms'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True, nullable=False)
-    owner_id = db.Column(db.Integer, nullable=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    type = db.Column(room_type_enum, default='group', nullable=False)
+    is_private = db.Column(db.Boolean, default=False, nullable=False)
+    password_hash = db.Column(db.String(255))
+    max_members = db.Column(db.Integer, default=50, nullable=False)
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_by_session = db.Column(db.String(255))
+    message_retention_days = db.Column(db.Integer, default=30, nullable=False)
+    max_message_count = db.Column(db.Integer, default=300, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     def __repr__(self):
         return f'<Room {self.name}>'

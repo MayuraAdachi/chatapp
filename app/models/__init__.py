@@ -1,8 +1,9 @@
-# app/models/__init__.py
 # -----------------------------------
 # モデルパッケージの初期化用ファイル
 # -----------------------------------
 
-from .user import User
-from .room import Room
-from .message import Message
+from .user import *
+from .room import *
+from .message import *
+from .room_member import *
+from .session import *

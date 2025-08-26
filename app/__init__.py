@@ -8,35 +8,18 @@ from .extensions import db, socketio
 from app.routes.room_routes import room_bp
 from app.routes.auth_routes import auth_bp
 
-# SQLiteかどうかを判定
-def is_sqlite_bool(uri: str)->bool:
-    return uri.startswith('sqlite:///')
-
 # Flaskのセットアップ
 def create_app():
     # .envファイルから環境変数を読み込む
     load_dotenv()
 
     # Flaskアプリケーションのインスタンスを作成
-    app = Flask(
-        __name__,
-        instance_path = os.path.join(os.path.dirname(__file__), 'instance'),
-        instance_relative_config = True,
-    )
+    app = Flask(__name__)
 
     # Flaskの設定
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secret')
-
-    # SQLAlchemyの設定
-    default_sqlite_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'instance', 'chat.db'))
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', f'sqlite:///{default_sqlite_path}')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # SQLiteの場合
-    is_sqlite = is_sqlite_bool(app.config['SQLALCHEMY_DATABASE_URI'])
-    if is_sqlite:
-        # インスタンスディレクトリがなければ作成
-        if not os.path.exists(app.instance_path):
-            os.makedirs(app.instance_path, exist_ok=True)
 
     # アプリ名・バージョン・デバッグモードの設定
     app.config['APP_TITLE'] = const.APP_TITLE
@@ -51,8 +34,8 @@ def create_app():
     db.init_app(app)
     socketio.init_app(app)
 
-    # ルーム関連のBlueprintを登録
-    app.register_blueprint(room_bp)
+    # Blueprintを登録
     app.register_blueprint(auth_bp)
+    app.register_blueprint(room_bp)
 
-    return app, is_sqlite
+    return app

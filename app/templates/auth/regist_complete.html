@@ -1,0 +1,15 @@
+{% set sub_title = "登録完了" %}
+{% include 'common/header.html' %}
+<div class="container">
+    <div class="form-box">
+        <h2>アカウント登録完了</h2>
+        <p>ご登録ありがとうございます。<br>ログイン画面からサインインしてください。</p>
+        <form method="get" action="/login" class="login-form">
+            <button class="btn login-btn" type="submit">ログイン画面へ</button>
+        </form>
+        <div style="margin-top:16px;">
+            <a href="/">← トップへ戻る</a>
+        </div>
+    </div>
+</div>
+{% include 'common/footer.html' %}

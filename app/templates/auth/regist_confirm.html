@@ -1,0 +1,34 @@
+{% set sub_title = "登録内容確認" %}
+{% include 'common/header.html' %}
+<div class="container">
+    <div class="form-box">
+        <h2>登録内容の確認</h2>
+        <form method="post" class="confirm-form">
+            <div class="confirm-item">
+                <label>ユーザー名</label>
+                <div class="confirm-value">{{ username }}</div>
+                <input type="hidden" name="username" value="{{ username }}" />
+            </div>
+            <div class="confirm-item">
+                <label>メールアドレス</label>
+                <div class="confirm-value">{{ email }}</div>
+                <input type="hidden" name="email" value="{{ email }}" />
+            </div>
+            <div class="confirm-item">
+                <label>パスワード</label>
+                <div class="confirm-value">（非表示）</div>
+                <input type="hidden" name="password" value="{{ password }}" />
+            </div>
+            <button class="btn regist-btn" type="submit">この内容で登録</button>
+        </form>
+        <form method="post" action="/regist" class="back-form">
+            <input type="hidden" name="username" value="{{ username }}" />
+            <input type="hidden" name="email" value="{{ email }}" />
+            <button class="btn" type="submit">修正する</button>
+        </form>
+        <div style="margin-top:16px;">
+            <a href="/">← トップへ戻る</a>
+        </div>
+    </div>
+</div>
+{% include 'common/footer.html' %}

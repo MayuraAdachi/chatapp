@@ -1,29 +1,30 @@
 {% set sub_title = "トップページ" %}
 {% include 'common/header.html' %}
-    <div class="container">
-        <div class="form-box">
-            <h2>ログイン</h2>
-            <form method="post" class="login-form">
-                <input name="username" placeholder="ユーザー名" required class="input-full login-input" />
-                <input name="password" type="password" placeholder="パスワード" required class="input-full login-input" />
-                <button class="btn login-btn" type="submit">ログイン</button>
-            </form>
-            <div class="or">または</div>
-            <form method="get" action="/register" class="register-form">
-                <button class="btn register-btn" type="submit">アカウントを作成</button>
-            </form>
-            <div style="margin-top:16px;">
-                <a href="/">← トップへ戻る</a>
+<div class="container">
+    <div class="form-box">
+        <h2>ログイン</h2>
+        <form method="post" class="login-form">
+            <div class="input-group">
+                <input name="username" placeholder="ユーザー名 または メールアドレス" class="input-full login-input" />
+                {% if errors and errors.username %}
+                    <div class="error-message">{{ errors.username }}</div>
+                {% endif %}
             </div>
-            {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <ul>
-                {% for message in messages %}
-                  <li>{{ message }}</li>
-                {% endfor %}
-                </ul>
-              {% endif %}
-            {% endwith %}
+            <div class="input-group">
+                <input name="password" type="password" placeholder="パスワード" class="input-full login-input" />
+                {% if errors and errors.password %}
+                    <div class="error-message">{{ errors.password }}</div>
+                {% endif %}
+            </div>
+            <button class="btn login-btn" type="submit">ログイン</button>
+        </form>
+        <div class="or">または</div>
+        <form method="get" action="{{ url_for('auth.regist') }}" class="regist-form">
+            <button class="btn regist-btn" type="submit">アカウントを作成</button>
+        </form>
+        <div style="margin-top:16px;">
+            <a href="/">← トップへ戻る</a>
         </div>
     </div>
+</div>
 {% include 'common/footer.html' %}

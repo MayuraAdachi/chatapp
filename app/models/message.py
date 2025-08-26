@@ -1,23 +1,40 @@
 # メッセージ（チャットログ）管理モデル
 from app.extensions import db
+from sqlalchemy.dialects.postgresql import ENUM
 from datetime import datetime
 from flask import current_app
+
+message_type_enum = ENUM('text', 'system', name='message_type', create_type=False)
 
 class Message(db.Model):
     __tablename__ = 'messages'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    room_id = db.Column(db.Integer, nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    session_id = db.Column(db.String(255))
+    display_name = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    message_type = db.Column(message_type_enum, default='text', nullable=False)
+    reply_to = db.Column(db.Integer, db.ForeignKey('messages.id'))
+    edited = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     deleted_room = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return f'<Message {self.id} room={self.room_id} user={self.user_id}>'
 
 # メッセージ追加
-def add_message(user_id, room_id, content):
-    msg = Message(user_id=user_id, room_id=room_id, content=content)
+def add_message(user_id, room_id, content, message_type='text', session_id=None, display_name=None, reply_to=None):
+    msg = Message(
+        user_id=user_id,
+        room_id=room_id,
+        content=content,
+        message_type=message_type,
+        session_id=session_id,
+        display_name=display_name,
+        reply_to=reply_to
+    )
     db.session.add(msg)
     db.session.commit()
     return msg

@@ -1,0 +1,39 @@
+{% set sub_title = "アカウント登録" %}
+{% include 'common/header.html' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth/style.css') }}">
+
+    <div class="container">
+        <div class="form-box">
+            <h2>アカウント作成</h2>
+            <form method="post" action="url_for('auth.regist_confirm')" class="regist-form">
+                {{ form.hidden_tag() }}
+                <div class="input-group">
+                    {{ form.username(class="input-full login-input", id="username", placeholder="ユーザー名", required=false) }}
+                    {% if errors and errors.username %}
+                        <div class="error-message">{{ errors.username }}</div>
+                    {% endif %}
+                </div>
+                <div class="input-group">
+                    {{ form.password(class="input-full login-input", style="position: relative", id="password", placeholder="パスワード（6文字以上）", type="password", required=false) }}
+                    <!-- 目のアイコン -->
+                    <span id="pass_view"><i class="far fa-eye-slash"></i></span>
+                </div>
+                <div class="input-group">
+                    {{ form.email(class="input-full login-input", placeholder="メールアドレス", type="email", id="email", required=false) }}
+                    {% if errors and errors.email %}
+                        <div class="error-message">{{ errors.email }}</div>
+                    {% endif %}
+                </div>
+                <button class="btn regist-btn" type="submit">アカウントを登録</button>
+            </form>
+
+            <div class="or">または</div>
+            <form method="get" action="{{ url_for('auth.index') }}" class="login-form">
+                <button class="btn login-btn" type="submit">アカウントでログイン</button>
+            </form>
+            <div style="margin-top:16px;">
+                <a href="/">← トップへ戻る</a>
+            </div>
+        </div>
+    </div>
+{% include 'common/footer.html' %}
