@@ -119,23 +119,15 @@ class AuthService:
                 db.session.flush()  # まずflushしてエラーを早期発見
                 db.session.commit()
 
-                print(f"DEBUG: User created successfully - ID: {new_user.id}, Username: {new_user.username}")
                 return True, new_user
             except Exception as create_error:
-                print(f"DEBUG: Error during user object creation or commit: {create_error}")
                 raise create_error
 
         except IntegrityError as e:
             db.session.rollback()
-            print(f"DEBUG: IntegrityError during user creation: {e}")
-            print(f"DEBUG: Original error: {e.orig}")
             return False, ['ユーザー名またはメールアドレスが既に使用されています']
         except Exception as e:
             db.session.rollback()
-            print(f"DEBUG: Unexpected error during user creation: {e}")
-            print(f"DEBUG: Exception type: {type(e)}")
-            import traceback
-            print(f"DEBUG: Traceback: {traceback.format_exc()}")
             return False, ['システムエラーが発生しました']
 
     @staticmethod
@@ -151,7 +143,6 @@ class AuthService:
             return None
 
         except Exception as e:
-            print(f"DEBUG: Authentication error: {e}")
             return None
 
     @staticmethod
@@ -175,18 +166,14 @@ class AuthService:
 
         # 登録処理を実行
         try:
-            print(f"DEBUG: Attempting to register user - username: {username}, email: {email}")
             success, result = AuthService.create_user(username, email, password)
-            print(f"DEBUG: Registration result: {success}")
 
             if success:
                 return True, 'success', 'アカウント登録が完了しました！'
             else:
-                print("DEBUG: Registration failed - redirecting to regist form")
                 return False, 'error', '登録に失敗しました。入力内容をご確認ください。'
         except Exception as e:
             # データベースエラーなどの場合
-            print(f"Registration error: {e}")
             return False, 'error', 'システムエラーが発生しました。しばらく経ってから再度お試しください。'
 
     @staticmethod

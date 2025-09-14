@@ -2,11 +2,6 @@
  * SweetAlert2を使用したアラート・確認ダイアログ共通関数
  */
 
-// SweetAlert2のCDN読み込み確認
-if (typeof Swal === 'undefined') {
-    console.warn('SweetAlert2が読み込まれていません。CDNの追加が必要です。');
-}
-
 /**
  * SweetAlert2の標準アイコン用CSS設定（必要に応じて軽微な調整のみ）
  */

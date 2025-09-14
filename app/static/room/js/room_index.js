@@ -17,13 +17,10 @@ function joinRoom(roomId, roomName) {
         // 直接参加確認
         showConfirmDialog(
             'ルーム参加',
-            `${roomName}に参加しますか？`,
+            `ルーム「${roomName}」に参加しますか？`,
             function() {
                 // CSRFトークンを取得
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                console.log('CSRFトークン:', csrfToken);
-                console.log('参加リクエスト送信:', roomId);
-
                 // AjaxでJSONリクエストを送信
                 fetch('/room/join', {
                     method: 'POST',
@@ -36,18 +33,15 @@ function joinRoom(roomId, roomName) {
                     })
                 })
                 .then(response => {
-                    console.log('レスポンス受信:', response);
                     return response.json();
                 })
-                .then(data => {
-                    console.log('レスポンスデータ:', data);
+                    .then(data => {
                     if (data.success) {
-                        // 成功時はレスポンスのredirect_urlまたは部屋名ベースのURLに遷移
-                        const redirectUrl = data.redirect_url || `/room/chat/${encodeURIComponent(roomName)}`;
-                        console.log('参加成功、遷移:', redirectUrl);
-                        window.location.href = redirectUrl;
+                        // 成功時は部屋名+IDクエリ付きのURLに遷移
+                        const redirectUrl = data.redirectUrl ? data.redirectUrl : `/room/chat/${encodeURIComponent(roomName)}?room_id=${roomId}`;
+                        console.log(data);
+                        // window.location.href = redirectUrl;
                     } else {
-                        console.log('参加失敗:', data.message);
                         showAlert('参加失敗', data.message, 'error');
                     }
                 })
@@ -69,7 +63,7 @@ function showPasswordDialog(roomId, roomName) {
     if (typeof Swal !== 'undefined') {
         Swal.fire({
             title: 'パスワードを入力',
-            text: `ルーム「${roomName}」に参加するためのパスワードを入力してください`,
+            text: `ルーム「${roomName}」に参加するためのパスワードを入力してください`, // 表示は部屋名
             input: 'password',
             inputAttributes: {
                 autocapitalize: 'off',
@@ -99,15 +93,15 @@ function showPasswordDialog(roomId, roomName) {
                         'X-CSRFToken': csrfToken
                     },
                     body: JSON.stringify({
-                        room_id: roomId,
+                        room_id: roomId, // 内部処理はID
                         password: result.value
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // 成功時はレスポンスのredirect_urlまたは部屋名ベースのURLに遷移
-                        const redirectUrl = data.redirect_url || `/room/chat/${encodeURIComponent(roomName)}`;
+                        // 成功時は部屋名+IDクエリ付きのURLに遷移
+                        const redirectUrl = `/room/chat/${encodeURIComponent(roomName)}?room_id=${roomId}`;
                         window.location.href = redirectUrl;
                     } else {
                         showAlert('参加失敗', data.message, 'error');
@@ -133,15 +127,14 @@ function showPasswordDialog(roomId, roomName) {
                     'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify({
-                    room_id: roomId,
+                    room_id: roomId, // 内部処理はID
                     password: password
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // 成功時はレスポンスのredirect_urlまたは部屋名ベースのURLに遷移
-                    const redirectUrl = data.redirect_url || `/room/chat/${encodeURIComponent(roomName)}`;
+                    const redirectUrl = `/room/chat/${encodeURIComponent(roomName)}?room_id=${roomId}`;
                     window.location.href = redirectUrl;
                 } else {
                     alert('参加失敗: ' + data.message);
@@ -160,7 +153,7 @@ function showPasswordDialog(roomId, roomName) {
  * @param {string} roomId - ルームID
  * @param {string} roomName - ルーム名
  */
-function deleteRoom(roomId, roomName) {
+function roomDelete(roomId, roomName) {
     showConfirmDialog(
         'ルーム削除',
         `ルーム「${roomName}」を削除しますか？この操作は取り消せません。`,
@@ -243,12 +236,12 @@ function onRoomDeleteSuccess(roomName) {
 
 // ページ読み込み完了時の初期化処理
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('ルーム一覧ページが読み込まれました');
+    // console.log('ルーム一覧ページが読み込まれました');
 
     // モーダルが閉じられた時の処理
-    const createRoomModal = document.getElementById('createRoomModal');
-    if (createRoomModal) {
-        createRoomModal.addEventListener('hidden.bs.modal', function () {
+    const roomCreateModal = document.getElementById('roomCreateModal');
+    if (roomCreateModal) {
+        roomCreateModal.addEventListener('hidden.bs.modal', function () {
             // フォームをリセット
             const form = this.querySelector('form');
             if (form) {
@@ -264,38 +257,38 @@ document.addEventListener('DOMContentLoaded', function() {
             clearAllErrors();
 
             // 作成ボタンを有効化
-            const createRoomBtn = document.getElementById('createRoomSubmit');
-            if (createRoomBtn) {
-                createRoomBtn.disabled = false;
+            const roomCreateBtn = document.getElementById('roomCreateSubmit');
+            if (roomCreateBtn) {
+                roomCreateBtn.disabled = false;
             }
         });
     }
 
     // ルーム作成フォームのバリデーション（WTForms対応）
-    const createRoomForm = document.getElementById('createRoomForm');
-    const roomNameInput = document.querySelector('#createRoomForm input[name="room_name"]');
-    const roomDescInput = document.querySelector('#createRoomForm textarea[name="room_description"]');
-    const maxMembersInput = document.querySelector('#createRoomForm input[name="max_members"]');
-    const roomPasswordInput = document.querySelector('#createRoomForm input[name="room_password"]');
-    const createRoomBtn = document.getElementById('createRoomSubmit');
+    const roomCreateForm = document.getElementById('roomCreateForm');
+    const roomNameInput = document.querySelector('#roomCreateForm input[name="room_name"]');
+    const roomDescInput = document.querySelector('#roomCreateForm textarea[name="room_description"]');
+    const maxMembersInput = document.querySelector('#roomCreateForm input[name="max_members"]');
+    const roomPasswordInput = document.querySelector('#roomCreateForm input[name="room_password"]');
+    const roomCreateBtn = document.getElementById('roomCreateSubmit');
 
-    if (roomNameInput && createRoomBtn) {
+    if (roomNameInput && roomCreateBtn) {
         // リアルタイムバリデーション
-        roomNameInput.addEventListener('input', validateRoomForm);
-        if (roomDescInput) roomDescInput.addEventListener('input', validateRoomForm);
-        if (maxMembersInput) maxMembersInput.addEventListener('input', validateRoomForm);
-        if (roomPasswordInput) roomPasswordInput.addEventListener('input', validateRoomForm);
+        roomNameInput.addEventListener('input', validateRoomCreateForm);
+        if (roomDescInput) roomDescInput.addEventListener('input', validateRoomCreateForm);
+        if (maxMembersInput) maxMembersInput.addEventListener('input', validateRoomCreateForm);
+        if (roomPasswordInput) roomPasswordInput.addEventListener('input', validateRoomCreateForm);
     }
 
     /**
-     * フォームバリデーション関数
+     * ルーム作成フォームバリデーション
      */
-    function validateRoomForm() {
+    function validateRoomCreateForm() {
         // WTFormsを使ったサーバーサイドバリデーション
-        if (createRoomForm) {
-            const formData = new FormData(createRoomForm);
+        if (roomCreateForm) {
+            const formData = new FormData(roomCreateForm);
 
-            fetch('/room/validate-form', {
+            fetch('/room/validate_room_create_form', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -308,13 +301,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data.success) {
                     // バリデーション成功
-                    if (createRoomBtn) {
-                        createRoomBtn.disabled = false;
+                    if (roomCreateBtn) {
+                        roomCreateBtn.disabled = false;
                     }
                 } else {
                     // バリデーションエラー
-                    if (createRoomBtn) {
-                        createRoomBtn.disabled = true;
+                    if (roomCreateBtn) {
+                        roomCreateBtn.disabled = true;
                     }
                     displayErrors(data.errors);
                 }
@@ -381,8 +374,8 @@ document.addEventListener('DOMContentLoaded', function() {
         updateValidationUI(isValid, errorMessage);
 
         // 作成ボタンの状態更新
-        if (createRoomBtn) {
-            createRoomBtn.disabled = !isValid;
+        if (roomCreateBtn) {
+            roomCreateBtn.disabled = !isValid;
         }
     }
 
@@ -400,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // is-invalid クラスを削除
-        const inputs = createRoomForm.querySelectorAll('input, textarea');
+        const inputs = roomCreateForm.querySelectorAll('input, textarea');
         inputs.forEach(input => {
             input.classList.remove('is-invalid');
         });
@@ -420,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const [field, messages] of Object.entries(errors)) {
             const errorElementId = errorMappings[field];
             const errorElement = document.getElementById(errorElementId);
-            const inputElement = createRoomForm.querySelector(`[name="${field}"]`);
+            const inputElement = roomCreateForm.querySelector(`[name="${field}"]`);
 
             if (errorElement && messages.length > 0) {
                 errorElement.textContent = messages[0];
@@ -458,10 +451,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // フォーム送信時の処理
-    if (createRoomForm) {
-        createRoomForm.addEventListener('submit', function(event) {
+    if (roomCreateForm) {
+        roomCreateForm.addEventListener('submit', function(event) {
             // バリデーションチェック
-            if (createRoomBtn && createRoomBtn.disabled) {
+            if (roomCreateBtn && roomCreateBtn.disabled) {
                 event.preventDefault();
                 if (typeof swal_alert === 'function') {
                     swal_alert('入力エラー', 'フォームに不正な値が入力されています。内容を確認してください。', 'warning');

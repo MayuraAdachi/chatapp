@@ -47,25 +47,30 @@ room_bp = Blueprint('room', __name__, url_prefix='/room')
 # ユーザー識別用のセッションIDをセット
 room_bp.before_app_request(room_controller.set_user)
 room_bp.route('/', methods=['GET', 'POST'])(room_controller.index)
-room_bp.route('/create', methods=['GET', 'POST'])(room_controller.create_room)
-room_bp.route('/validate-form', methods=['POST'])(room_controller.validate_room_form)
+room_bp.route('/create', methods=['GET', 'POST'])(room_controller.room_create)
+room_bp.route('/validate_room_create_form', methods=['POST'])(room_controller.validate_room_create_form)
+room_bp.route('/delete/<room_id>', methods=['POST'])(room_controller.delete_room)
+room_bp.route('/chat/<room_name>', methods=['GET'])(room_controller.chat)
+room_bp.route('/join', methods=['POST'])(room_controller.join_room)
 
-# 削除APIのCSRF保護を除外
-@csrf.exempt
-@room_bp.route('/delete/<room_id>', methods=['POST'])
-def delete_room_route(room_id):
-    return room_controller.delete_room(room_id)
 
-# チャット画面・参加機能
-room_bp.route('/<room_id>/chat', methods=['GET'])(room_controller.chat)
-room_bp.route('/chat/<room_name>', methods=['GET'])(room_controller.chat_by_name)
+def update_room_settings():
+    """
+    ルーム設定変更（Ajax用）
+    """
+    from flask import request, jsonify
+    data = request.get_json()
+    room_id = data.get('room_id')
+    name = data.get('name')
+    description = data.get('description')
+    max_members = data.get('max_members')
+    password = data.get('password')
+    # ここで権限・バリデーション・DB更新処理
+    # RoomService.update_room_settings(room_id, ...) など
+    # 仮実装（成功のみ返す）
+    return jsonify({ 'success': True })
 
-# 参加APIのCSRF保護を除外
-@csrf.exempt
-@room_bp.route('/join', methods=['POST'])
-def join_room_route():
-    return room_controller.join_room()
-
+room_bp.route('/update_settings', methods=['POST'])(update_room_settings)
 # =============================================================================
 # 公開Blueprint一覧
 # =============================================================================

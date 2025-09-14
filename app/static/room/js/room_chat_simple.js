@@ -6,8 +6,6 @@ let currentUser = null;
 
 // ページ読み込み完了時の初期化
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('チャット画面を初期化中...');
-
     // データの取得
     if (window.chatData) {
         currentRoom = {
@@ -22,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
             isAdmin: window.chatData.isAdmin
         };
     } else {
-        console.error('チャットデータが見つかりません');
         showToast('チャットデータの読み込みに失敗しました', 'danger');
         return;
     }
@@ -41,7 +38,6 @@ function initializeSocket() {
     try {
         // Socket.IOが利用可能かチェック
         if (typeof io === 'undefined') {
-            console.warn('Socket.IO が読み込まれていません。リアルタイム機能は無効です。');
             hideConnectingMessage();
             showToast('リアルタイム機能は無効です（表示のみ）', 'warning');
             return;
@@ -53,13 +49,11 @@ function initializeSocket() {
 
         // 接続イベント
         socket.on('connect', function() {
-            console.log('Socket.IOに接続しました');
             hideConnectingMessage();
             showToast('チャットサーバーに接続しました', 'success');
         });
 
         socket.on('disconnect', function() {
-            console.log('Socket.IOから切断されました');
             showConnectingMessage();
             showToast('チャットサーバーから切断されました', 'warning');
         });
@@ -80,12 +74,10 @@ function initializeSocket() {
 
         // エラーイベント
         socket.on('error', function(error) {
-            console.error('Socket.IOエラー:', error);
             showToast('通信エラーが発生しました', 'danger');
         });
 
     } catch (error) {
-        console.error('Socket.IO初期化エラー:', error);
         hideConnectingMessage();
         showToast('チャットサーバーとの接続に失敗しました（表示のみモード）', 'warning');
     }
@@ -100,7 +92,6 @@ function setupMessageInput() {
     const sendButton = document.getElementById('sendButton');
 
     if (!messageInput || !messageForm) {
-        console.error('メッセージ入力要素が見つかりません');
         return;
     }
 
@@ -151,12 +142,10 @@ function setupUIEvents() {
  */
 function joinRoom() {
     if (!currentRoom || !currentUser) {
-        console.error('ルーム、またはユーザー情報が不足しています');
         return;
     }
 
     if (!socket) {
-        console.warn('Socket.IOが利用できません。基本表示のみ有効です。');
         hideConnectingMessage();
         showToast(`${currentRoom.name} に参加しました（表示のみモード）`, 'info');
         return;
@@ -249,7 +238,6 @@ function showToast(message, type = 'info') {
  * システムメッセージを表示
  */
 function displaySystemMessage(message) {
-    console.log('システムメッセージ:', message);
     // 実装予定: チャット画面にシステムメッセージを表示
 }
 
@@ -257,6 +245,5 @@ function displaySystemMessage(message) {
  * メッセージを表示
  */
 function displayMessage(data) {
-    console.log('メッセージ:', data);
     // 実装予定: チャット画面にメッセージを表示
 }

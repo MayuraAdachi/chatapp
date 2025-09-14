@@ -9,9 +9,6 @@ __pycache__/
 venv/
 ENV/
 
-# VSCode
-.vscode/
-
 # OS
 .DS_Store
 Thumbs.db

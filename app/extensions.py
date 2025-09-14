@@ -5,8 +5,8 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 
-# SocketIOインスタンスを生成（アプリ本体とは分離）
-socketio = SocketIO()  # async_mode指定なし
+# SocketIOインスタンスを生成（eventletを利用）
+socketio = SocketIO(async_mode="eventlet")
 
 # SQLAlchemyインスタンスを生成
 # （Flaskアプリ本体でinit_appすることで利用可能）
@@ -21,5 +21,4 @@ try:
     from flask_babel import Babel
     babel = Babel()
 except ImportError:
-    print("Flask-Babel not installed. Multilingual support disabled.")
     babel = None

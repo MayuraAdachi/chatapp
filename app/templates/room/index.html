@@ -1,4 +1,4 @@
-{% set sub_title = _("チャットルーム") %}
+{% set sub_title = _("チャット一覧") %}
 {% include 'common/header.html' %}
 
 <!-- Bootstrap Table CSS -->
@@ -92,7 +92,7 @@
                         <!-- ルーム作成 -->
                         <div class="col-md-4">
                             <button class="btn btn-success w-100 rounded-2 btn-create-room shadow-sm"
-                                data-bs-toggle="modal" data-bs-target="#createRoomModal"
+                                data-bs-toggle="modal" data-bs-target="#roomCreateModal"
                                 style="transition: all 0.2s ease-in-out;">
                                 <i class="fas fa-plus me-2"></i>{{ _("新しいルームを作成") }}
                             </button>
@@ -176,7 +176,7 @@
                         </thead>
                         <tbody>
                             {% for room in rooms %}
-                            <tr data-room-id="{{ room.id }}">
+                            <tr data-room-id="{{ room.id }}" data-room-name="{{ room.name }}">
                                 <td>
                                     <div class="d-flex gap-1 justify-content-center" role="group">
                                         <button class="btn btn-success btn-sm px-3 py-2 shadow-sm"
@@ -193,7 +193,7 @@
                                         {% endif %}
                                         {% if can_delete %}
                                         <button class="btn btn-outline-danger btn-sm px-3 py-2 shadow-sm"
-                                            onclick="deleteRoom('{{ room.id }}', '{{ room.name }}')"
+                                            onclick="roomDelete('{{ room.id }}', '{{ room.name }}')"
                                             title="{{ _('ルームを削除') }}">
                                             <i class="fas fa-trash me-1"></i>{{ _('削除') }}
                                         </button>
@@ -240,13 +240,13 @@
 </main>
 
 <!-- ルーム作成モーダル -->
-<div class="modal fade" id="createRoomModal" tabindex="-1" aria-labelledby="createRoomModalLabel" aria-hidden="true">
+<div class="modal fade" id="roomCreateModal" tabindex="-1" aria-labelledby="roomCreateModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="{{ url_for('room.create_room') }}" id="createRoomForm">
+            <form method="post" action="{{ url_for('room.room_create') }}" id="roomCreateForm">
                 {{ create_form.hidden_tag() }}
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createRoomModalLabel">
+                    <h5 class="modal-title" id="roomCreateModalLabel">
                         <i class="fas fa-plus me-2"></i>{{ _("新しいルームを作成") }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -292,7 +292,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>{{ _("キャンセル") }}
                     </button>
-                    <button type="submit" class="btn btn-success" id="createRoomSubmit">
+                    <button type="submit" class="btn btn-success" id="roomCreateSubmit">
                         <i class="fas fa-plus me-1"></i>{{ _("作成") }}
                     </button>
                 </div>

@@ -7,9 +7,7 @@ from app.models.room import (
     add_room as model_add_room,
     get_rooms as model_get_rooms,
     get_room_by_id,
-    get_room_by_name,
     delete_room_by_id,
-    get_room_owner
 )
 from app.models.message import mark_room_deleted
 import uuid
@@ -96,7 +94,7 @@ class RoomService:
         return True
 
     @staticmethod
-    def create_room(room_name, description=None, max_members=50, room_password=None):
+    def room_create(room_name, description=None, max_members=50, room_password=None):
         """
         新しいルームを作成
         :param room_name: ルーム名
@@ -118,54 +116,22 @@ class RoomService:
             result['message'] = 'ルーム名を入力してください'
             return result
 
-        # ルーム名の長さチェック
-        if len(room_name.strip()) < 1:
-            result['message'] = 'ルーム名を入力してください'
-            return result
-
-        if len(room_name) > 50:
-            result['message'] = 'ルーム名は50文字以内で入力してください'
-            return result
-
-        # ルーム名の文字種チェック（危険な文字を除外）
-        import re
-        if not re.match(r'^[a-zA-Z0-9ぁ-んァ-ンー一-龯\s\-_()（）【】「」]+$', room_name):
-            result['message'] = 'ルーム名に使用できない文字が含まれています'
-            return result
-
-        # 説明文の長さチェック
-        if description and len(description) > 500:
-            result['message'] = 'ルーム説明は500文字以内で入力してください'
-            return result
-
         if not RoomService.is_authenticated():
             result['message'] = 'ルームを作成するにはログインが必要です'
             return result
 
-        # バリデーション: 最大メンバー数
+        # 最大メンバー数の型変換のみ（範囲チェックはフォームで担保）
         if max_members is None:
             max_members = 50
         try:
             max_members = int(max_members)
-            if max_members < 2 or max_members > 100:
-                result['message'] = '最大メンバー数は2〜100の範囲で入力してください'
-                return result
         except (ValueError, TypeError):
             result['message'] = '最大メンバー数は数値で入力してください'
-            return result        # パスワードバリデーション（パスワードが入力されている場合のみ）
+            return result
         has_password = bool(room_password and room_password.strip())
 
         if has_password:
             room_password = room_password.strip()
-
-            if len(room_password) < 4 or len(room_password) > 32:
-                result['message'] = 'パスワードは4〜32文字で入力してください'
-                return result
-
-            import re
-            if not re.match(r'^[a-zA-Z0-9]+$', room_password):
-                result['message'] = 'パスワードは半角英数字のみ使用できます'
-                return result
         else:
             room_password = None
 
@@ -192,9 +158,6 @@ class RoomService:
 
         except Exception as e:
             result['message'] = f'ルームの作成に失敗しました: {str(e)}'
-            print(f"Error creating room: {e}")
-            import traceback
-            traceback.print_exc()
 
         return result
 
@@ -252,8 +215,7 @@ class RoomService:
             result['message'] = f'ルーム「{room.name}」を削除しました'
 
         except Exception as e:
-            result['message'] = 'ルームの削除に失敗しました'
-            print(f"Error deleting room: {e}")
+            result['message'] = f'ルームの削除に失敗しました: {str(e)}'
 
         return result
 
@@ -273,55 +235,8 @@ class RoomService:
             flash('ルームを作成しました', 'success')
             return True
         except Exception as e:
-            flash('ルームの作成に失敗しました', 'error')
-            print(f"Error creating room from index: {e}")
+            flash(f'ルームの作成に失敗しました: {str(e)}', 'error')
             return False
-
-    @staticmethod
-    def get_room_for_chat(room_id):
-        """
-        チャット用のルーム情報を取得
-        :param room_id: ルームID
-        :return: dict - ルーム情報と権限
-        """
-        result = {
-            'success': False,
-            'message': '',
-            'room': None,
-            'is_owner': False
-        }
-
-        user_id = session.get('user_id')
-
-        if not user_id:
-            result['message'] = 'ユーザー認証が必要です'
-            return result
-
-        try:
-            # ルーム存在チェック
-            room = get_room_by_id(room_id)
-            if not room:
-                result['message'] = 'ルームが見つかりません'
-                return result
-
-            # 権限チェック
-            permissions = RoomService.get_user_permissions()
-            is_admin = permissions['is_admin']
-            is_developer = permissions['is_developer']
-
-            # オーナーチェック
-            is_owner = False
-            if room.created_by_user_id:
-                is_owner = (str(room.created_by_user_id) == str(user_id))
-
-            result['success'] = True
-            result['room'] = room
-            result['is_owner'] = is_owner or is_admin or is_developer
-
-        except Exception as e:
-            result['message'] = f'ルーム情報の取得に失敗しました: {str(e)}'
-
-        return result
 
     @staticmethod
     def join_room(room_id, password=''):
@@ -331,34 +246,27 @@ class RoomService:
         :param password: パスワード（必要な場合）
         :return: dict - 結果情報
         """
-        print(f"RoomService.join_room called: room_id={room_id}, password={password}")
-
         result = {
             'success': False,
             'message': '',
-            'redirect_url': ''
+            'redirectUrl': ''
         }
 
         user_id = session.get('user_id')
-        print(f"user_id from session: {user_id}")
 
         if not user_id:
             result['message'] = 'ユーザー認証が必要です'
-            print(f"No user_id, returning: {result}")
             return result
 
         try:
             # ルーム存在チェック
             room = get_room_by_id(room_id)
-            print(f"room found: {room}")
 
             if not room:
                 result['message'] = 'ルームが見つかりません'
                 return result
 
             # パスワードチェック（必要な場合）
-            print(f"room.has_password: {getattr(room, 'has_password', False)}")
-
             if hasattr(room, 'has_password') and room.has_password:
                 if not password:
                     result['message'] = 'パスワードが必要です'
@@ -371,14 +279,10 @@ class RoomService:
             from urllib.parse import quote
             result['success'] = True
             result['message'] = f'ルーム「{room.name}」に参加しました'
-            result['redirect_url'] = f'/room/chat/{quote(room.name)}'
+            result['redirectUrl'] = f'/room/chat/{quote(room.name)}?room_id={room.id}'
             result['room_name'] = room.name
-            print(f"join successful: {result}")
 
         except Exception as e:
-            print(f"Exception in join_room: {e}")
-            import traceback
-            traceback.print_exc()
             result['message'] = f'参加処理中にエラーが発生しました: {str(e)}'
 
         return result
@@ -433,19 +337,26 @@ class RoomService:
             session['user_id'] = str(uuid.uuid4())
 
     @staticmethod
-    def get_room_for_chat_by_name(room_name):
+    def get_room_for_chat(room_id):
         """
-        チャット用のルーム情報を部屋名で取得
-        :param room_name: ルーム名
+        チャット用のルーム情報をIDで取得
+        :param room_id: ルームID
         :return: dict - ルーム情報と権限
         """
-        room = get_room_by_name(room_name)
-        if room:
-            return RoomService.get_room_for_chat(room.id)
-        else:
+        room = get_room_by_id(room_id)
+        if not room:
             return {
                 'success': False,
-                'message': '指定された名前のルームが見つかりません',
+                'message': '指定されたIDのルームが見つかりません',
                 'room': None,
                 'is_owner': False
             }
+        permissions = RoomService.get_user_permissions()
+        is_owner = False
+        if hasattr(room, 'created_by_user_id') and permissions['user_id']:
+            is_owner = (str(room.created_by_user_id) == str(permissions['user_id']))
+        return {
+            'success': True,
+            'room': room,
+            'is_owner': is_owner
+        }

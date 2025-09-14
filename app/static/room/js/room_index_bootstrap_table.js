@@ -2,16 +2,12 @@
 
 // ページ読み込み完了時の初期化処理
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('ルーム一覧ページが読み込まれました');
-
     // jQueryとBootstrap Tableの存在確認
     if (typeof $ === 'undefined') {
-        console.error('jQueryが読み込まれていません');
         return;
     }
 
     if (typeof $.fn.bootstrapTable === 'undefined') {
-        console.error('Bootstrap Tableが読み込まれていません');
         return;
     }
 
@@ -59,16 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        console.log('Bootstrap Table初期化完了');
-
         // ソートのカスタマイズ
         $table.on('sort.bs.table', function (e, name, order) {
-            console.log(`ソート変更: ${name} (${order})`);
         });
 
         // カスタムイベントハンドラー
         $table.on('refresh.bs.table', function () {
-            console.log('テーブルが更新されました');
         });
 
         $table.on('search.bs.table', function () {
@@ -76,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         $table.on('page-change.bs.table', function (e, number, size) {
-            console.log(`ページ変更: ${number}, サイズ: ${size}`);
         });
 
         // 初期化後の処理
@@ -138,31 +129,21 @@ function updateRoomCount() {
  * クイック検索機能の設定
  */
 function setupQuickSearch() {
-    console.log('クイック検索をセットアップ中...');
     const quickSearchInput = document.getElementById('quickSearchInput');
     const clearQuickSearch = document.getElementById('clearQuickSearch');
     const $table = $('#roomTable');
 
-    console.log('検索要素の状態:', {
-        quickSearchInput: !!quickSearchInput,
-        clearQuickSearch: !!clearQuickSearch,
-        table: $table.length
-    });
-
     if (quickSearchInput && $table.length > 0) {
-        console.log('検索機能を有効化中...');
         // リアルタイム検索
         let searchTimeout;
         quickSearchInput.addEventListener('input', function() {
             clearTimeout(searchTimeout);
             const searchTerm = this.value.trim();
-            console.log('検索実行:', searchTerm);
 
             searchTimeout = setTimeout(() => {
                 // Bootstrap Tableの検索機能を使用
                 $table.bootstrapTable('resetSearch', searchTerm);
                 updateRoomCount();
-                console.log('検索完了');
             }, 300);
         });
 

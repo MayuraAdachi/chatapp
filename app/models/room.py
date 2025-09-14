@@ -2,22 +2,20 @@
 # チャットルーム（SQLAlchemyモデル版）
 
 from app.extensions import db
-from sqlalchemy.dialects.postgresql import ENUM, UUID
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 import uuid
 
-room_type_enum = ENUM('group', 'one_on_one', name='room_type', create_type=False)
-
 class Room(db.Model):
-    __tablename__ = 'rooms'
+    __tablename__ = 't_rooms'
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
-    type = db.Column(room_type_enum, default='group', nullable=False)
+    type = db.Column(db.String(20), default='group', nullable=False)
     is_private = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(255))
     max_members = db.Column(db.Integer, default=50, nullable=False)
-    created_by_user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.id'))
+    created_by_user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('t_users.id'))
     created_by_session = db.Column(db.String(255))
     created_by_name = db.Column(db.String(100))
     message_retention_days = db.Column(db.Integer, default=30, nullable=False)
@@ -31,7 +29,7 @@ class Room(db.Model):
 def add_room(room_name, owner_id=None, session_id=None, creator_name=None, description=None, max_members=50, has_password=False, room_password=None):
     # 既存のルーム名チェック
     if Room.query.filter_by(name=room_name).first():
-        return False  # 既に存在する場合はFalseを返す
+        return False
 
     # パスワードハッシュ化
     password_hash = None

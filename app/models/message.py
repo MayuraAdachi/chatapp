@@ -1,22 +1,20 @@
 # メッセージ（チャットログ）管理モデル
 from app.extensions import db
-from sqlalchemy.dialects.postgresql import ENUM, UUID
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 from flask import current_app
 import uuid
 
-message_type_enum = ENUM('text', 'system', name='message_type', create_type=False)
-
 class Message(db.Model):
-    __tablename__ = 'messages'
+    __tablename__ = 't_messages'
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    room_id = db.Column(UUID(as_uuid=True), db.ForeignKey('rooms.id', ondelete='CASCADE'), nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.id'))
+    room_id = db.Column(UUID(as_uuid=True), db.ForeignKey('t_rooms.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('t_users.id'))
     session_id = db.Column(db.String(255))
     display_name = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    message_type = db.Column(message_type_enum, default='text', nullable=False)
-    reply_to = db.Column(UUID(as_uuid=True), db.ForeignKey('messages.id'))
+    message_type = db.Column(db.String(20), default='text', nullable=False)
+    reply_to = db.Column(UUID(as_uuid=True), db.ForeignKey('t_messages.id'))
     edited = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)

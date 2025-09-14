@@ -1,6 +1,6 @@
 # ルーム関連のWTFormsフォーム
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, PasswordField, BooleanField
+from wtforms import StringField, TextAreaField, IntegerField, PasswordField
 from wtforms.validators import DataRequired, Length, NumberRange, Optional, Regexp, ValidationError
 from app.models.room import get_rooms
 
@@ -40,18 +40,20 @@ class RoomCreateForm(FlaskForm):
     )
 
     def validate_room_name(self, field):
-        """ルーム名の重複チェック"""
+        """ルーム名の重複チェック（同じユーザーが同じ部屋名は不可）"""
         if field.data:
             # 不正文字のチェック
             import re
-            if not re.match(r'^[a-zA-Z0-9ぁ-んァ-ンー一-龯\s\-_()（）【】「」]+$', field.data):
+            if not re.match(r'^[a-zA-Zａ-ｚＡ-Ｚ0-9０-９ぁ-んァ-ンー一-龯\s\-_()（）【】「」]+$', field.data):
                 raise ValidationError('ルーム名に使用できない文字が含まれています')
 
-            # 重複チェック
+            # 重複チェック（同じユーザーが同じ部屋名は不可）
+            from flask import session
+            user_id = session.get('user_id')
             existing_rooms = get_rooms()
             for room in existing_rooms:
-                if room.name == field.data:
-                    raise ValidationError('このルーム名は既に使用されています')
+                if room.name == field.data and str(room.created_by_user_id) == str(user_id):
+                    raise ValidationError('同じユーザーが同じルーム名を作成することはできません')
 
     def validate_max_members(self, field):
         """最大メンバー数の妥当性チェック"""
@@ -79,6 +81,7 @@ class RoomJoinForm(FlaskForm):
         'パスワード',
         validators=[
             Optional(),
-            Length(min=4, max=32, message='パスワードは4〜32文字で入力してください')
+            Length(min=4, max=32, message='パスワードは4〜32文字で入力してください'),
+            Regexp(r'^[a-zA-Z0-9]+$', message='パスワードは半角英数字のみ使用可能です')
         ]
     )

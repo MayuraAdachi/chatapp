@@ -1,0 +1,40 @@
+{
+    "python-envs.pythonProjects": [],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.extraPaths": [],
+    "python.analysis.packageIndexDepths": [
+        {
+            "name": "",
+            "depth": 10
+        }
+    ],
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/.DS_Store": true
+    },
+    "files.watcherExclude": {
+        "**/__pycache__/**": true,
+        "**/node_modules/**": true,
+        "**/.git/**": true,
+        "**/logs/**": true,
+        "**/tmp/**": true
+    },
+    "search.exclude": {
+        "**/__pycache__": true,
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/logs": true
+    },
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.quickSuggestionsDelay": 100,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "extensions.autoUpdate": false,
+    "git.autoRepositoryDetection": false,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 5000
+}

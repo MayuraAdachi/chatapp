@@ -17,7 +17,7 @@ function refreshLogs() {
             }
         })
         .catch(error => {
-            console.error('ログ更新エラー:', error);
+            // console.error('ログ更新エラー:', error);
         });
 }
 

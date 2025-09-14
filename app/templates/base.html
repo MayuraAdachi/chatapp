@@ -1,9 +1,20 @@
 {% include 'common/header.html' %}
-    <main class="flex-grow-1 d-flex flex-column">
-        <div class="container flex-grow-1 py-4">
-            {% block content %}{% endblock %}
-        </div>
-    </main>
+<main class="flex-grow-1 d-flex flex-column">
+    <!-- フラッシュメッセージ表示領域 -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="container mt-2">
+        {% for message in messages %}
+        <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div class="container flex-grow-1 py-4">
+        {% block content %}{% endblock %}
+    </div>
+</main>
 {% include 'common/footer.html' %}
 </body>
+
 </html>

@@ -4,6 +4,7 @@ from flask_wtf.csrf import validate_csrf, ValidationError
 from app.services.room_service import RoomService
 from app.models.room import get_room_owner
 from app.forms.room_forms import RoomCreateForm, AnonymousUserForm, RoomJoinForm
+import logging
 
 def is_authenticated():
     """
@@ -17,59 +18,13 @@ def set_user():
     """
     RoomService.set_user_session()
 
-def chat(room_id):
-    """
-    チャット画面を表示
-    """
-    try:
-        # ルーム情報を取得
-        room_data = RoomService.get_room_for_chat(room_id)
-
-        if not room_data['success']:
-            flash(room_data['message'], 'error')
-            return redirect(url_for('room.index'))
-
-        # ユーザー権限を取得
-        permissions = RoomService.get_user_permissions()
-
-        return render_template('room/chat.html',
-                                room=room_data['room'],
-                                username=permissions['username'] or 'ゲスト',
-                                user_id=permissions['user_id'],
-                                is_owner=room_data['is_owner'],
-                                is_admin=permissions['is_admin'] or permissions['is_developer'])
-
-    except Exception as e:
-        flash(f'チャット画面の読み込み中にエラーが発生しました: {str(e)}', 'error')
-        return redirect(url_for('room.index'))
-
 def join_room():
     """
     ルームに参加（Ajax）
     """
-    print(f"join_room called: method={request.method}, content_type={request.content_type}")
-    print(f"request.headers: {dict(request.headers)}")
-    print(f"request.json: {request.json}")
-
     if request.method == 'POST':
-        # 一時的にCSRF検証をスキップ（開発用）
-        # CSRFトークンの検証
-        # try:
-        #     csrf_token = request.headers.get('X-CSRFToken')
-        #     if csrf_token:
-        #         validate_csrf(csrf_token)
-        #         print("CSRF token validation successful")
-        # except ValidationError as e:
-        #     print(f"CSRF token validation failed: {e}")
-        #     return jsonify({
-        #         'success': False,
-        #         'message': 'CSRF token validation failed'
-        #     }), 400
-
         room_id = request.json.get('room_id')
         password = request.json.get('password', '')
-
-        print(f"room_id: {room_id}, password: {password}")
 
         if not room_id:
             return jsonify({
@@ -79,10 +34,20 @@ def join_room():
 
         try:
             result = RoomService.join_room(room_id, password)
-            print(f"join result: {result}")
+            # redirectUrlがなければ部屋名を取得して生成
+            if result.get('success'):
+                redirectUrl = result.get('redirectUrl')
+                if not redirectUrl:
+                    # 部屋名取得
+                    room_data = RoomService.get_room_for_chat(room_id)
+                    if room_data.get('success'):
+                        room_name = room_data['room']['name']
+                        redirectUrl = f"/room/chat/{room_name}?room_id={room_id}"
+                    else:
+                        redirectUrl = f"/room/chat/?room_id={room_id}"
+                result['redirectUrl'] = redirectUrl
             return jsonify(result)
         except Exception as e:
-            print(f"join error: {e}")
             return jsonify({
                 'success': False,
                 'message': f'参加処理中にエラーが発生しました: {str(e)}'
@@ -143,7 +108,7 @@ def index():
                             anonymous_form=anonymous_form,
                             create_form=create_form)
 
-def create_room():
+def room_create():
     """
     新しいルームを作成（WTForms使用）
     """
@@ -152,7 +117,7 @@ def create_room():
     if request.method == 'POST':
         if form.validate_on_submit():
             # フォームが有効な場合の処理
-            result = RoomService.create_room(
+            result = RoomService.room_create(
                 room_name=form.room_name.data,
                 description=form.room_description.data,
                 max_members=form.max_members.data,
@@ -175,25 +140,21 @@ def delete_room(room_id):
     """
     ルームを削除（管理者、開発者、作成者のみ）
     """
-    print(f"delete_room called: method={request.method}, room_id={room_id}")
-
     if request.method == 'POST':
         try:
             result = RoomService.delete_room(room_id)
-            print(f"delete result: {result}")
 
             if result['success']:
                 flash(result['message'], 'success')
             else:
                 flash(result['message'], 'error')
         except Exception as e:
-            print(f"delete error: {e}")
             flash(f'削除処理中にエラーが発生しました: {str(e)}', 'error')
 
     # リダイレクト先を明示的に指定
     return redirect('/room/')
 
-def validate_room_form():
+def validate_room_create_form():
     """
     Ajax用のルーム作成フォームバリデーション
     """
@@ -214,32 +175,30 @@ def validate_room_form():
             'errors': errors
         })
 
-def chat_by_name(room_name):
+def chat(room_name):
     """
-    チャット画面を表示（部屋名指定）
+    チャット画面を表示（部屋名＋room_idクエリ指定）
     """
     try:
-        # URLデコードを行う
         from urllib.parse import unquote
         room_name = unquote(room_name)
-
-        # ルーム情報を取得（部屋名から）
-        room_data = RoomService.get_room_for_chat_by_name(room_name)
-
+        room_id = request.args.get('room_id')
+        if not room_id:
+            flash('部屋IDが指定されていません', 'error')
+            return redirect(url_for('room.index'))
+        room_data = RoomService.get_room_for_chat(room_id)
         if not room_data['success']:
             flash(room_data['message'], 'error')
             return redirect(url_for('room.index'))
-
-        # ユーザー権限を取得
         permissions = RoomService.get_user_permissions()
-
-        return render_template('room/chat.html',
-                                room=room_data['room'],
-                                username=permissions['username'] or 'ゲスト',
-                                user_id=permissions['user_id'],
-                                is_owner=room_data['is_owner'],
-                                is_admin=permissions['is_admin'] or permissions['is_developer'])
-
+        return render_template(
+            'room/chat.html',
+            room=room_data['room'],
+            username=permissions.get('username', 'ゲスト'),
+            user_id=permissions.get('user_id'),
+            is_owner=room_data.get('is_owner', False),
+            is_admin=permissions.get('is_admin', False) or permissions.get('is_developer', False)
+        )
     except Exception as e:
         flash(f'チャット画面の読み込み中にエラーが発生しました: {str(e)}', 'error')
         return redirect(url_for('room.index'))

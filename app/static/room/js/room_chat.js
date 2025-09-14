@@ -8,8 +8,6 @@ let currentUser = null;
 
 // ページ読み込み完了時の初期化
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('チャット画面を初期化中...');
-
     // データの取得
     if (window.chatData) {
         currentRoom = {
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
             isAdmin: window.chatData.isAdmin
         };
     } else {
-        console.error('チャットデータが見つかりません');
         showToast('チャットデータの読み込みに失敗しました', 'danger');
         return;
     }
@@ -43,7 +40,6 @@ function initializeSocket() {
     try {
         // Socket.IOが利用可能かチェック
         if (typeof io === 'undefined') {
-            console.warn('Socket.IO が読み込まれていません。リアルタイム機能は無効です。');
             hideConnectingMessage();
             showToast('リアルタイム機能は無効です（表示のみ）', 'warning');
             return;
@@ -55,13 +51,11 @@ function initializeSocket() {
 
         // 接続イベント
         socket.on('connect', function() {
-            console.log('Socket.IOに接続しました');
             hideConnectingMessage();
             showToast('チャットサーバーに接続しました', 'success');
         });
 
         socket.on('disconnect', function() {
-            console.log('Socket.IOから切断されました');
             showConnectingMessage();
             showToast('チャットサーバーから切断されました', 'warning');
         });
@@ -84,23 +78,12 @@ function initializeSocket() {
             updateMemberList(data.members);
         });
 
-        // 入力状態イベント
-        socket.on('user_typing', function(data) {
-            showTypingIndicator(data.username);
-        });
-
-        socket.on('user_stop_typing', function(data) {
-            hideTypingIndicator(data.username);
-        });
-
         // エラーイベント
         socket.on('error', function(error) {
-            console.error('Socket.IOエラー:', error);
             showToast('通信エラーが発生しました', 'danger');
         });
 
     } catch (error) {
-        console.error('Socket.IO初期化エラー:', error);
         hideConnectingMessage();
         showToast('チャットサーバーとの接続に失敗しました（表示のみモード）', 'warning');
     }
@@ -116,7 +99,6 @@ function setupMessageInput() {
     const messageLength = document.getElementById('messageLength');
 
     if (!messageInput || !messageForm) {
-        console.error('メッセージ入力要素が見つかりません');
         return;
     }
 
@@ -194,12 +176,10 @@ function setupUIEvents() {
  */
 function joinRoom() {
     if (!currentRoom || !currentUser) {
-        console.error('ルーム、またはユーザー情報が不足しています');
         return;
     }
 
     if (!socket) {
-        console.warn('Socket.IOが利用できません。基本表示のみ有効です。');
         hideConnectingMessage();
         showToast(`${currentRoom.name} に参加しました（表示のみモード）`, 'info');
         loadStaticMessages(); // 静的なメッセージを読み込む（実装可能であれば）
@@ -389,16 +369,6 @@ function autoResizeTextarea(textarea) {
  * 入力状態の処理
  */
 function handleTypingIndicator() {
-    if (!isTyping) {
-        isTyping = true;
-        if (socket) {
-            socket.emit('start_typing', {
-                room_id: currentRoom.id,
-                username: currentUser.name
-            });
-        }
-    }
-
     // タイマーをリセット
     clearTimeout(typingTimer);
     typingTimer = setTimeout(stopTyping, 2000);
@@ -408,15 +378,6 @@ function handleTypingIndicator() {
  * 入力状態を停止
  */
 function stopTyping() {
-    if (isTyping) {
-        isTyping = false;
-        if (socket) {
-            socket.emit('stop_typing', {
-                room_id: currentRoom.id,
-                username: currentUser.name
-            });
-        }
-    }
     clearTimeout(typingTimer);
 }
 
@@ -429,8 +390,10 @@ function showTypingIndicator(username) {
 
     if (!indicator || !usersSpan) return;
 
-    usersSpan.textContent = username;
-    indicator.style.display = 'block';
+    // Ajaxでtyping状態取得・表示（実装例）
+    // fetch(`/room/typing_status/${currentRoom.id}`)
+    //   .then(res => res.json())
+    //   .then(data => { /* 表示処理 */ });
 }
 
 /**
@@ -563,17 +526,26 @@ function saveRoomSettings() {
         password: roomPassword?.trim() || null
     };
 
-    if (socket) {
-        socket.emit('update_room_settings', settings);
-    }
+    // Socket.IOではなくAjaxで送信
+    fetch(`/room/update_settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showToast('設定を保存しました', 'success');
+        } else {
+            showToast(data.message || '保存に失敗しました', 'danger');
+        }
+    });
 
     // モーダルを閉じる
     const modal = bootstrap.Modal.getInstance(document.getElementById('roomSettingsModal'));
     if (modal) {
         modal.hide();
     }
-
-    showToast('設定を保存しました', 'success');
 }
 
 /**

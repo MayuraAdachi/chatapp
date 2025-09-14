@@ -29,3 +29,9 @@ PRIORITY_LANGUAGES = ['ja']
 
 # 開発中の言語（後で対応予定）
 DEVELOPMENT_LANGUAGES = ['en', 'zh', 'ko', 'fr', 'de', 'es']
+
+# ログ関連
+LOG_LEVEL = 'DEBUG'  # 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+LOG_FILE = None # 出力ファイル名（例: 'logs/yyyy/mm_dd.log'）不要ならNone/空文字でターミナルのみ
+LOG_FORMAT = '[%(asctime)s] %(levelname)s %(name)s: %(message)s'
+LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'

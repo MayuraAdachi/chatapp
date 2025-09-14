@@ -14,7 +14,7 @@ class StatisticsManager {
 
         // ルーム構成グラフ
         if (document.getElementById('roomChart')) {
-            this.createRoomChart();
+            this.roomCreateChart();
         }
     }
 
@@ -24,7 +24,6 @@ class StatisticsManager {
 
         // データはwindow.statsDataから取得
         if (!window.statsData || !window.statsData.userStats) {
-            console.error('ユーザー統計データが見つかりません');
             return;
         }
 
@@ -55,12 +54,11 @@ class StatisticsManager {
     }
 
     // ルームグラフ作成（データは外部から設定される）
-    createRoomChart() {
+    roomCreateChart() {
         const roomCtx = document.getElementById('roomChart').getContext('2d');
 
         // データはwindow.statsDataから取得
         if (!window.statsData || !window.statsData.roomStats) {
-            console.error('ルーム統計データが見つかりません');
             return;
         }
 
@@ -89,7 +87,6 @@ class StatisticsManager {
     // 統計の更新
     refreshStats() {
         if (!window.statsData || !window.statsData.apiUrl) {
-            console.error('統計API URLが設定されていません');
             return;
         }
 

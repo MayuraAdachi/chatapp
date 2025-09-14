@@ -22,11 +22,6 @@ auth_bp.route('/regist/complete', methods=['GET', 'POST'])(auth_controller.regis
 auth_bp.route('/settings', methods=['GET', 'POST'])(auth_controller.settings)
 auth_bp.route('/change_password', methods=['POST'])(auth_controller.change_password)
 
-# 将来的に追加予定の認証機能
-# auth_bp.route('/forgot_password', methods=['GET', 'POST'])(auth_controller.forgot_password)
-# auth_bp.route('/reset_password/<token>', methods=['GET', 'POST'])(auth_controller.reset_password)
-# auth_bp.route('/verify_email/<token>', methods=['GET'])(auth_controller.verify_email)
-
 # =============================================================================
 # 認証Blueprint一覧
 # =============================================================================

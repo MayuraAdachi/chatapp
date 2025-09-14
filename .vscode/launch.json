@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "Launch Flask-SocketIO App",
+            "program": "${workspaceFolder}/app.py",
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal",
+            // "args": ["--no-reload"], # eventlet使用時はこっち
+            "args": [],
+            "justMyCode": true,
+            "jinja": true,
+            "redirectOutput": true,
+            "stopOnEntry": false
+        }
+    ]
+}

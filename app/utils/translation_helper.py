@@ -35,7 +35,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': 'Chat Room',
         'room_list': 'Room List',
-        'create_room': 'Create Room',
+        'room_create': 'Create Room',
         'join_room': 'Join Room',
         'leave_room': 'Leave Room',
         'room_name': 'Room Name',
@@ -150,7 +150,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': 'チャットルーム',
         'room_list': 'ルーム一覧',
-        'create_room': 'ルーム作成',
+        'room_create': 'ルーム作成',
         'join_room': 'ルーム参加',
         'leave_room': 'ルーム退出',
         'room_name': 'ルーム名',
@@ -265,7 +265,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': '聊天室',
         'room_list': '房间列表',
-        'create_room': '创建房间',
+        'room_create': '创建房间',
         'join_room': '加入房间',
         'leave_room': '退出房间',
         'room_name': '房间名称',
@@ -380,7 +380,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': '채팅방',
         'room_list': '방 목록',
-        'create_room': '방 만들기',
+        'room_create': '방 만들기',
         'join_room': '방 참여',
         'leave_room': '방 나가기',
         'room_name': '방 이름',
@@ -495,7 +495,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': 'Sala de chat',
         'room_list': 'Lista de salas',
-        'create_room': 'Crear sala',
+        'room_create': 'Crear sala',
         'join_room': 'Unirse a sala',
         'leave_room': 'Salir de sala',
         'room_name': 'Nombre de la sala',
@@ -587,7 +587,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': 'Salon de discussion',
         'room_list': 'Liste des salons',
-        'create_room': 'Créer un salon',
+        'room_create': 'Créer un salon',
         'join_room': 'Rejoindre le salon',
         'leave_room': 'Quitter le salon',
         'room_name': 'Nom du salon',
@@ -679,7 +679,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': 'Chatraum',
         'room_list': 'Raumliste',
-        'create_room': 'Raum erstellen',
+        'room_create': 'Raum erstellen',
         'join_room': 'Raum beitreten',
         'leave_room': 'Raum verlassen',
         'room_name': 'Raumname',
@@ -760,7 +760,7 @@ BASIC_TRANSLATIONS = {
         # ナビゲーション・メニュー
         'chat_room': 'Sala de chat',
         'room_list': 'Lista de salas',
-        'create_room': 'Criar sala',
+        'room_create': 'Criar sala',
         'join_room': 'Entrar na sala',
         'leave_room': 'Sair da sala',
         'room_name': 'Nome da sala',
