@@ -20,18 +20,18 @@ from datetime import datetime, timedelta, timezone
 def clear_existing_data():
     """既存データを削除"""
     print("データ削除中...")
-    db.session.execute(db.text("DELETE FROM t_messages"))
-    db.session.execute(db.text("DELETE FROM t_room_members"))
-    db.session.execute(db.text("DELETE FROM t_rooms"))
-    db.session.execute(db.text("DELETE FROM t_sessions"))
-    db.session.execute(db.text("DELETE FROM t_users"))
+    db.session.execute(db.text("DELETE FROM messages"))
+    db.session.execute(db.text("DELETE FROM room_members"))
+    db.session.execute(db.text("DELETE FROM rooms"))
+    db.session.execute(db.text("DELETE FROM sessions"))
+    db.session.execute(db.text("DELETE FROM users"))
 
-    db.session.execute(db.text("DELETE FROM m_user_roles WHERE is_system = FALSE"))
-    db.session.execute(db.text("DELETE FROM m_user_statuses WHERE is_system = FALSE"))
-    db.session.execute(db.text("DELETE FROM m_room_types WHERE is_system = FALSE"))
-    db.session.execute(db.text("DELETE FROM m_message_types WHERE is_system = FALSE"))
-    db.session.execute(db.text("DELETE FROM m_room_roles WHERE is_system = FALSE"))
-    db.session.execute(db.text("DELETE FROM m_languages WHERE is_system = FALSE"))
+    db.session.execute(db.text("DELETE FROM user_roles WHERE is_system = FALSE"))
+    db.session.execute(db.text("DELETE FROM user_statuses WHERE is_system = FALSE"))
+    db.session.execute(db.text("DELETE FROM room_types WHERE is_system = FALSE"))
+    db.session.execute(db.text("DELETE FROM message_types WHERE is_system = FALSE"))
+    db.session.execute(db.text("DELETE FROM room_roles WHERE is_system = FALSE"))
+    db.session.execute(db.text("DELETE FROM languages WHERE is_system = FALSE"))
 
     db.session.commit()
     print("削除完了")
@@ -399,7 +399,7 @@ def create_master_data():
 
     for role_code, role_name, description, can_edit_master, can_edit_user, can_view_master, can_view_user, display_order, is_system in user_roles_data:
         db.session.execute(db.text("""
-            INSERT INTO m_user_roles (role_code, role_name, description, can_edit_master, can_edit_user, can_view_master, can_view_user, display_order, is_system)
+            INSERT INTO user_roles (role_code, role_name, description, can_edit_master, can_edit_user, can_view_master, can_view_user, display_order, is_system)
             VALUES (:role_code, :role_name, :description, :can_edit_master, :can_edit_user, :can_view_master, :can_view_user, :display_order, :is_system)
             ON CONFLICT (role_code) DO NOTHING
         """), {
@@ -425,7 +425,7 @@ def create_master_data():
 
     for status_code, status_name, description, display_order, is_system in user_statuses_data:
         db.session.execute(db.text("""
-            INSERT INTO m_user_statuses (status_code, status_name, description, display_order, is_system)
+            INSERT INTO user_statuses (status_code, status_name, description, display_order, is_system)
             VALUES (:status_code, :status_name, :description, :display_order, :is_system)
             ON CONFLICT (status_code) DO NOTHING
         """), {
@@ -446,7 +446,7 @@ def create_master_data():
 
     for type_code, type_name, description, display_order, is_system in room_types_data:
         db.session.execute(db.text("""
-            INSERT INTO m_room_types (type_code, type_name, description, display_order, is_system)
+            INSERT INTO room_types (type_code, type_name, description, display_order, is_system)
             VALUES (:type_code, :type_name, :description, :display_order, :is_system)
             ON CONFLICT (type_code) DO NOTHING
         """), {
@@ -468,7 +468,7 @@ def create_master_data():
 
     for type_code, type_name, description, display_order, is_system in message_types_data:
         db.session.execute(db.text("""
-            INSERT INTO m_message_types (type_code, type_name, description, display_order, is_system)
+            INSERT INTO message_types (type_code, type_name, description, display_order, is_system)
             VALUES (:type_code, :type_name, :description, :display_order, :is_system)
             ON CONFLICT (type_code) DO NOTHING
         """), {
@@ -490,7 +490,7 @@ def create_master_data():
 
     for role_code, role_name, description, can_invite, can_kick, can_edit_room, can_delete_messages, display_order, is_system in room_roles_data:
         db.session.execute(db.text("""
-            INSERT INTO m_room_roles (role_code, role_name, description, can_invite, can_kick, can_edit_room, can_delete_messages, display_order, is_system)
+            INSERT INTO room_roles (role_code, role_name, description, can_invite, can_kick, can_edit_room, can_delete_messages, display_order, is_system)
             VALUES (:role_code, :role_name, :description, :can_invite, :can_kick, :can_edit_room, :can_delete_messages, :display_order, :is_system)
             ON CONFLICT (role_code) DO NOTHING
         """), {
@@ -515,7 +515,7 @@ def create_master_data():
 
     for lang_code, lang_name, display_order, is_system in languages_data:
         db.session.execute(db.text("""
-            INSERT INTO m_languages (lang_code, lang_name, display_order, is_system)
+            INSERT INTO languages (lang_code, lang_name, display_order, is_system)
             VALUES (:lang_code, :lang_name, :display_order, :is_system)
             ON CONFLICT (lang_code) DO NOTHING
         """), {

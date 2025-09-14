@@ -2,7 +2,7 @@ from app.extensions import db
 from datetime import datetime
 
 class Session(db.Model):
-    __tablename__ = 't_sessions'
+    __tablename__ = 'sessions'
     id = db.Column(db.String(255), primary_key=True)
     display_name = db.Column(db.String(100), nullable=False)
     ip_address = db.Column(db.String(64))  # INET型はSQLAlchemy標準ではstrでOK

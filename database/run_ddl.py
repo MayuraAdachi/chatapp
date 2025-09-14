@@ -10,41 +10,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-def drop_and_create_database(db_user, db_password, db_host, db_port, db_name):
-    """データベースを削除・再作成"""
-    from sqlalchemy import create_engine, text
-
-    # postgresデフォルトデータベースに接続
-    default_db_uri = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/postgres'
-    engine = create_engine(default_db_uri, isolation_level='AUTOCOMMIT')
-
-    try:
-        with engine.connect() as conn:
-            print(f"データベース '{db_name}' を削除中...")
-            # 既存の接続を強制終了
-            conn.execute(text(f"""
-                SELECT pg_terminate_backend(pid)
-                FROM pg_stat_activity
-                WHERE datname = '{db_name}' AND pid <> pg_backend_pid()
-            """))
-
-            # データベース削除
-            conn.execute(text(f"DROP DATABASE IF EXISTS {db_name}"))
-            print(f"データベース '{db_name}' を削除しました")
-
-            # データベース作成
-            print(f"データベース '{db_name}' を作成中...")
-            conn.execute(text(f"CREATE DATABASE {db_name}"))
-            print(f"データベース '{db_name}' を作成しました")
-
-    except Exception as e:
-        print(f"データベース削除・作成エラー: {e}")
-        return False
-    finally:
-        engine.dispose()
-
-    return True
-
 def run_ddl():
     """DDLファイルを実行"""
     # シンプルなFlaskアプリを作成
@@ -55,11 +20,7 @@ def run_ddl():
     db_password = os.getenv('DB_PASSWORD', 'admin')
     db_host = os.getenv('DB_HOST', 'localhost')
     db_port = os.getenv('DB_PORT', '5432')
-    db_name = os.getenv('DB_NAME', 'chatapp_dev')
-
-    # データベースの削除・再作成
-    if not drop_and_create_database(db_user, db_password, db_host, db_port, db_name):
-        return False
+    db_name = os.getenv('DB_NAME', 'chatapp_db')
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
